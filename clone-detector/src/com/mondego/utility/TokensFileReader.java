@@ -49,7 +49,14 @@ public class TokensFileReader {
             String prefix = new String(buf);
             String[] parts = prefix.split(",");
             int ntokens = Integer.parseInt(parts[2]);
-
+/*
+            int testnum = Integer.parseInt(parts[0]);
+            if (testnum != 11) {
+                logger.debug(this.nodeId + " RL, file " + parts[1] + ", "
+                        + testnum + "is not test function, over");
+                while (((char) br.read()) != '\n')
+                    ;
+            }else */
             if (ntokens > this.maxTokens) {
                 logger.debug(this.nodeId + " RL, file " + parts[1] + ", "
                         + ntokens + " tokens is too big. Ignoring...");

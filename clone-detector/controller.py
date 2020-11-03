@@ -8,6 +8,10 @@ import subprocess
 import sys
 import os
 
+if sys.getdefaultencoding() != 'utf-8':
+    reload(sys)
+    sys.setdefaultencoding('utf-8')
+
 class ScriptControllerException(Exception):
     pass
 
@@ -170,7 +174,7 @@ class ScriptController(object):
         return p.returncode
 
 if __name__ == '__main__':
-    numnodes = 2
+    numnodes = 1
     if len(sys.argv) > 1:
         numnodes = int(sys.argv[1])
     print("search will be carried out with {num} nodes".format(num=numnodes))

@@ -7,8 +7,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
-import net.jmatrix.eproperties.EProperties;
+//import net.jmatrix.eproperties.EProperties;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -43,6 +44,8 @@ public class IndexMerger {
                     + "/index/shards/" + shardId;
             String forwardIndexDirPath = node.getAbsolutePath()
                     + "/fwdindex/shards/" + shardId;
+            logger.info("invertedIndexDirPath:"+invertedIndexDirPath);
+            logger.info("forwardIndexDirPath"+forwardIndexDirPath);
             File invertedIndexFile = new File(invertedIndexDirPath);
             File forwardIndexFile = new File(forwardIndexDirPath);
             if (invertedIndexFile.exists() && forwardIndexFile.exists()) {
@@ -84,7 +87,8 @@ public class IndexMerger {
         mergePolicy.setMaxCFSSegmentSizeMB(0);
         IndexWriter indexWriter = null;
         try {
-            FSDirectory dir = FSDirectory.open(new File(Util.INDEX_DIR+"/"+shardId));
+            FSDirectory dir = FSDirectory.open(new File("/home/xinxin/桌面/clonedetector/index"+"/"+shardId));
+            //FSDirectory dir = FSDirectory.open(new File(Util.INDEX_DIR+"/"+shardId));
             indexWriter = new IndexWriter(dir, indexWriterConfig);
             FSDirectory[] dirs = this.invertedIndexDirectories
                     .toArray(new FSDirectory[this.invertedIndexDirectories
@@ -112,8 +116,9 @@ public class IndexMerger {
         fwdmergePolicy.setMaxCFSSegmentSizeMB(0);
         indexWriter = null;
         try {
-
-            FSDirectory dir = FSDirectory.open(new File(Util.FWD_INDEX_DIR+"/"+shardId));
+            FSDirectory dir = FSDirectory.open(new File("/home/xinxin/桌面/clonedetector/fwdindex"+"/"+shardId));
+            //logger.info("path: "+dir.toString());
+            //FSDirectory dir = FSDirectory.open(new File(Util.FWD_INDEX_DIR+"/"+shardId));
             indexWriter = new IndexWriter(dir, fwdIndexWriterConfig);
             FSDirectory[] dirs = this.forwardIndexDirectories
                     .toArray(new FSDirectory[this.forwardIndexDirectories
@@ -144,9 +149,9 @@ public class IndexMerger {
         });
     }
 
-    public static void main(String[] args) throws FileNotFoundException {
+    public static void stepMerge(String[] arg) throws FileNotFoundException {
         IndexMerger indexMerger = new IndexMerger();
-        EProperties properties = new EProperties();
+        Properties properties = new Properties();
         FileInputStream fis = null;
         IndexMerger.populateNodeDirs();
         logger.info("reading Q values from properties file");

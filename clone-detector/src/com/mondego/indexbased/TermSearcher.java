@@ -29,6 +29,7 @@ import com.mondego.utility.Util;
  */
 public class TermSearcher {
     private long queryId;
+    private long queryFunctionId;//
     private String searchTerm;
     private int freqTerm;
     private IndexReader reader;
@@ -38,11 +39,13 @@ public class TermSearcher {
     private int computedThreshold;
     private int shard;
     private static final Logger logger = LogManager.getLogger(TermSearcher.class);
-    public TermSearcher(int shard, long qid) {
+    //public TermSearcher(int shard, long qid) {
+    public TermSearcher(int shard, long qid, long fid) {
         this.earlierDocs = new ArrayList<Long>();
         this.simMap = new HashMap<Long, CandidateSimInfo>();
         this.shard = shard;
         this.queryId = qid;
+        this.queryFunctionId = fid;
     }
 
     public synchronized void searchWithPosition(int queryTermsSeen) {
@@ -77,12 +80,14 @@ public class TermSearcher {
 
                                         Document d = SearchManager.searcher
                                                 .get(shard).getDocument(docId);
-                                        long candidateId = Long.parseLong(d
-                                                .get("id"));
+                                        //long candidateId = Long.parseLong(d
+                                          //      .get("id"));
+                                        long candidateFunctionId = Long.parseLong(d.get("functionId"));
                                         // Get rid of these early -- we're only
                                         // looking for candidates
                                         // whose ids are smaller than the query
-                                        if (candidateId >= this.queryId) {
+                                        //if (candidateId >= this.queryId) {
+                                        if (candidateFunctionId==11 || this.queryFunctionId!=11) {
                                             // System.out.println("Query " +
                                             // this.queryId +
                                             // ", getting rid of " +
@@ -90,7 +95,7 @@ public class TermSearcher {
                                             earlierDocs.add(docId);
                                             continue; // we reject the candidate
                                         }
-
+                                       
                                         simInfo = new CandidateSimInfo();
                                         simInfo.doc = d;
                                         simInfo.candidateSize = Integer
