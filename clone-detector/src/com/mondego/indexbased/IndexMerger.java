@@ -25,6 +25,7 @@ import org.apache.lucene.util.Version;
 import com.mondego.utility.Util;
 
 public class IndexMerger {
+    private static Properties properties = new Properties();
     private List<FSDirectory> invertedIndexDirectories;
     private List<FSDirectory> forwardIndexDirectories;
     public static String SHARD_STRING = "shards";
@@ -39,6 +40,7 @@ public class IndexMerger {
     private void populateIndexdirs(int shardId) {
         this.invertedIndexDirectories = new ArrayList<FSDirectory>();
         this.forwardIndexDirectories = new ArrayList<FSDirectory>();
+        logger.info("pppppppppppppppppppppppppppopulate Index dirs "+IndexMerger.nodeDirs.length);
         for (File node : IndexMerger.nodeDirs) {
             String invertedIndexDirPath = node.getAbsolutePath()
                     + "/index/shards/" + shardId;
@@ -49,6 +51,7 @@ public class IndexMerger {
             File invertedIndexFile = new File(invertedIndexDirPath);
             File forwardIndexFile = new File(forwardIndexDirPath);
             if (invertedIndexFile.exists() && forwardIndexFile.exists()) {
+                logger.info("iiiiiiiiiiiiiiiiiiiiiiiiiiiiif");
                 FSDirectory idir;
                 FSDirectory fdir;
                 try {
@@ -87,7 +90,8 @@ public class IndexMerger {
         mergePolicy.setMaxCFSSegmentSizeMB(0);
         IndexWriter indexWriter = null;
         try {
-            FSDirectory dir = FSDirectory.open(new File("/home/xinxin/桌面/clonedetector/index"+"/"+shardId));
+            FSDirectory dir = FSDirectory.open(new File(properties.getProperty("RESULT_DIR_PATH")+"index"+"/"+shardId));
+            logger.info("path: "+dir.toString());
             //FSDirectory dir = FSDirectory.open(new File(Util.INDEX_DIR+"/"+shardId));
             indexWriter = new IndexWriter(dir, indexWriterConfig);
             FSDirectory[] dirs = this.invertedIndexDirectories
@@ -116,8 +120,8 @@ public class IndexMerger {
         fwdmergePolicy.setMaxCFSSegmentSizeMB(0);
         indexWriter = null;
         try {
-            FSDirectory dir = FSDirectory.open(new File("/home/xinxin/桌面/clonedetector/fwdindex"+"/"+shardId));
-            //logger.info("path: "+dir.toString());
+            FSDirectory dir = FSDirectory.open(new File(properties.getProperty("RESULT_DIR_PATH")+"fwdindex"+"/"+shardId));
+            logger.info("path: "+dir.toString());
             //FSDirectory dir = FSDirectory.open(new File(Util.FWD_INDEX_DIR+"/"+shardId));
             indexWriter = new IndexWriter(dir, fwdIndexWriterConfig);
             FSDirectory[] dirs = this.forwardIndexDirectories
@@ -138,7 +142,10 @@ public class IndexMerger {
     }
 
     public static void populateNodeDirs() {
-        File currentDir = new File(System.getProperty("user.dir"));
+        //File currentDir = new File(System.getProperty("user.dir"));
+        //logger.info(SearchManager.RESULT_DIR);
+        logger.info("pppppopulate node dirs::"+properties.getProperty("RESULT_DIR_PATH"));
+        File currentDir = new File(properties.getProperty("RESULT_DIR_PATH"));
         IndexMerger.nodeDirs = currentDir.listFiles(new FileFilter() {
             @Override
             public boolean accept(File pathname) {
@@ -149,48 +156,43 @@ public class IndexMerger {
         });
     }
 
-    public static void stepMerge(String[] arg) throws FileNotFoundException {
+    public static void stepMerge(String[] arg, Properties propertiesPM) throws FileNotFoundException {
+        properties = propertiesPM;
         IndexMerger indexMerger = new IndexMerger();
-        Properties properties = new Properties();
-        FileInputStream fis = null;
+        //Properties properties = new Properties();
+        //FileInputStream fis = null;
         IndexMerger.populateNodeDirs();
-        logger.info("reading Q values from properties file");
-        String propertiesPath = System.getProperty("properties.location");
-        logger.info("propertiesPath: " + propertiesPath);
-        fis = new FileInputStream(propertiesPath);
-        try {
-            properties.load(fis);
-            boolean isSharding = Boolean.parseBoolean(properties
-                    .getProperty("IS_SHARDING"));
-            if(isSharding){
-                String segmentString = properties
-                        .getProperty("SHARD_MAX_NUM_TOKENS");
-                String[] shardSegments = segmentString.split(",");
-                for (int shardId = 1; shardId <= shardSegments.length+1; shardId++) {
-                    logger.info("*** shard "+ shardId);
-                    indexMerger.populateIndexdirs(shardId);
-                    indexMerger.mergeindexes(shardId);
-                }
-            }else{
-                indexMerger.populateIndexdirs(1);
-                indexMerger.mergeindexes(1);
+        //logger.info("reading Q values from properties file");
+        //String propertiesPath = System.getProperty("properties.location");
+        //logger.info("propertiesPath: " + propertiesPath);
+        //fis = new FileInputStream(propertiesPath);
+//        try {
+//            properties.load(fis);
+        boolean isSharding = Boolean.parseBoolean(properties
+                .getProperty("IS_SHARDING"));
+        if(isSharding){
+            String segmentString = properties
+                    .getProperty("SHARD_MAX_NUM_TOKENS");
+            String[] shardSegments = segmentString.split(",");
+            for (int shardId = 1; shardId <= shardSegments.length+1; shardId++) {
+                logger.info("*** shard "+ shardId);
+                indexMerger.populateIndexdirs(shardId);
+                indexMerger.mergeindexes(shardId);
             }
-            
-
-        } catch (IOException e) {
-            logger.error("ERROR READING PROPERTIES FILE, "
-                    + e.getMessage());
-            System.exit(1);
-        } finally {
-
-            if (null != fis) {
-                try {
-                    fis.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+        }else{
+            indexMerger.populateIndexdirs(1);
+            indexMerger.mergeindexes(1);
         }
+
+//
+//        } catch (IOException e) {
+//            logger.error("ERROR READING PROPERTIES FILE, "
+//                    + e.getMessage());
+//            System.exit(1);
+//        } finally {
+//
+//       }
+
         logger.info("all merge done!");
     }
 }

@@ -94,7 +94,7 @@ public class Shard {
         mergePolicy.setMaxCFSSegmentSizeMB(0); // what was this for?
 
         try {
-            FSDirectory dir = FSDirectory.open(new File(SearchManager.ROOT_DIR
+            FSDirectory dir = FSDirectory.open(new File(SearchManager.RESULT_DIR
                     + SearchManager.NODE_PREFIX + "/index/shards/" + this.id));
             if (SearchManager.invertedIndexDirectoriesOfShard.containsKey(id)) {
                 List<FSDirectory> dirs = SearchManager.invertedIndexDirectoriesOfShard
@@ -127,7 +127,7 @@ public class Shard {
         mergePolicy.setNoCFSRatio(0);// what was this for?
         mergePolicy.setMaxCFSSegmentSizeMB(0); // what was this for?
         try {
-            FSDirectory dir = FSDirectory.open(new File(SearchManager.ROOT_DIR
+            FSDirectory dir = FSDirectory.open(new File(SearchManager.RESULT_DIR
                     + SearchManager.NODE_PREFIX + "/fwdindex/shards/" + id));
             if (SearchManager.forwardIndexDirectoriesOfShard.containsKey(id)) {
                 List<FSDirectory> dirs = SearchManager.forwardIndexDirectoriesOfShard

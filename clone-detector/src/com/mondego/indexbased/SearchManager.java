@@ -291,50 +291,48 @@ public class SearchManager {
         return null;
     }
 
-    public static void stepInitIndexSearch(String[] arg)
+    public static void stepInitIndexSearch(String[] arg, Properties propertiesPM)
             throws IOException, ParseException, InterruptedException {
         long start_time = System.nanoTime();
         logger.info("user.dir is: " + System.getProperty("user.dir"));
         logger.info("root dir is:" + System.getProperty("properties.rootDir"));
         SearchManager.ROOT_DIR = System.getProperty("properties.rootDir");
-        InputStreamReader isr = null;
-        logger.info("reading Q values from properties file");
-        String propertiesPath = System.getProperty("properties.location");
-        logger.debug("propertiesPath: " + propertiesPath);
-        FileInputStream fis = new FileInputStream(propertiesPath);
-        isr = new InputStreamReader(fis, "UTF-8");
-        try {
-            properties.load(isr);
-            String[] params = new String[2];
-            params[0] = arg[0];
-            params[1] = arg[1];
-            SearchManager.DATASET_DIR = SearchManager.ROOT_DIR
-                    + properties.getProperty("DATASET_DIR_PATH");
-            SearchManager.RESULT_DIR = properties.getProperty("RESULT_DIR_PATH");
-            SearchManager.isGenCandidateStats = Boolean.parseBoolean(
-                    properties.getProperty("IS_GEN_CANDIDATE_STATISTICS"));
-            SearchManager.isStatusCounterOn = Boolean.parseBoolean(
-                    properties.getProperty("IS_STATUS_REPORTER_ON"));
-            SearchManager.NODE_PREFIX = properties.getProperty("NODE_PREFIX")
-                    .toUpperCase();
-            SearchManager.OUTPUT_DIR = SearchManager.RESULT_DIR + SearchManager.NODE_PREFIX + "/"
-                    + properties.getProperty("OUTPUT_DIR");
-            SearchManager.QUERY_DIR_PATH = SearchManager.RESULT_DIR + SearchManager.NODE_PREFIX + "/"
-                    + properties.getProperty("QUERY_DIR_PATH");
-            logger.debug("Query path:" + SearchManager.QUERY_DIR_PATH);
-            SearchManager.LOG_PROCESSED_LINENUMBER_AFTER_X_LINES = Integer
-                    .parseInt(properties.getProperty(
-                            "LOG_PROCESSED_LINENUMBER_AFTER_X_LINES", "1000"));
-            theInstance = new SearchManager(params);
-        } catch (IOException e) {
-            logger.error("ERROR READING PROPERTIES FILE, " + e.getMessage());
-            System.exit(1);
-        } finally {
-
-            if (null != fis) {
-                fis.close();
-            }
-        }
+        properties = propertiesPM;
+        //InputStreamReader isr = null;
+        //logger.info("reading Q values from properties file");
+        //String propertiesPath = System.getProperty("properties.location");
+        //logger.debug("propertiesPath: " + propertiesPath);
+        //FileInputStream fis = new FileInputStream(propertiesPath);
+        //isr = new InputStreamReader(fis, "UTF-8");
+//        try {
+            //properties.load(isr);
+        String[] params = new String[2];
+        params[0] = arg[0];
+        params[1] = arg[1];
+        SearchManager.DATASET_DIR = SearchManager.ROOT_DIR
+                + properties.getProperty("DATASET_DIR_PATH");
+        SearchManager.RESULT_DIR = properties.getProperty("RESULT_DIR_PATH");
+        SearchManager.isGenCandidateStats = Boolean.parseBoolean(
+                properties.getProperty("IS_GEN_CANDIDATE_STATISTICS"));
+        SearchManager.isStatusCounterOn = Boolean.parseBoolean(
+                properties.getProperty("IS_STATUS_REPORTER_ON"));
+        SearchManager.NODE_PREFIX = properties.getProperty("NODE_PREFIX")
+                .toUpperCase();
+        SearchManager.OUTPUT_DIR = SearchManager.RESULT_DIR + SearchManager.NODE_PREFIX + "/"
+                + properties.getProperty("OUTPUT_DIR");
+        SearchManager.QUERY_DIR_PATH = SearchManager.RESULT_DIR + SearchManager.NODE_PREFIX + "/"
+                + properties.getProperty("QUERY_DIR_PATH");
+        logger.debug("Query path:" + SearchManager.QUERY_DIR_PATH);
+        SearchManager.LOG_PROCESSED_LINENUMBER_AFTER_X_LINES = Integer
+                .parseInt(properties.getProperty(
+                        "LOG_PROCESSED_LINENUMBER_AFTER_X_LINES", "1000"));
+        theInstance = new SearchManager(params);
+//        } catch (IOException e) {
+//            logger.error("ERROR READING PROPERTIES FILE, " + e.getMessage());
+//            System.exit(1);
+//        } finally {
+//
+//        }
         logger.debug(SearchManager.NODE_PREFIX + " MAX_TOKENS=" + max_tokens
                 + " MIN_TOKENS=" + min_tokens);
 
@@ -398,6 +396,8 @@ public class SearchManager {
             signOffNode();
             if (SearchManager.NODE_PREFIX.equals("NODE_1")) {
                 logger.debug("NODES COMPLETED SO FAR: " + getCompletedNodes());
+                logger.info("SearchManager.total nodes:"+SearchManager.totalNodes);
+                logger.info("completed nodes:"+SearchManager.completedNodes);
                 while (true) {
                     if (allNodesCompleted()) {
                         theInstance.backupInput();
@@ -527,6 +527,8 @@ public class SearchManager {
 
     private static int getCompletedNodes() {
         File completedNodeFile = new File(SearchManager.completedNodes);
+        logger.info(completedNodeFile.exists());
+        logger.info(completedNodeFile.getAbsolutePath());
         FileLock lock = null;
         int count = 0;
         RandomAccessFile raf;
@@ -537,6 +539,7 @@ public class SearchManager {
                 lock = channel.lock();
                 while (raf.readLine() != null) {
                     count++;
+                    logger.info(count);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -558,11 +561,13 @@ public class SearchManager {
     private static int getNodes() {
         if (-1 == SearchManager.totalNodes) {
             File searchMertadaFile = new File(Util.SEARCH_METADATA);
+            logger.info("search metadata:"+Util.SEARCH_METADATA);
             try {
                 BufferedReader br = Util.getReader(searchMertadaFile);
                 String line = br.readLine();
                 if (null != line) {
                     SearchManager.totalNodes = Integer.parseInt(line.trim());
+                    logger.info("total nodes cccccccccccccccccccccccccccccccccccchange:"+SearchManager.totalNodes);
                     return SearchManager.totalNodes;
                 }
             } catch (FileNotFoundException e) {
@@ -659,6 +664,7 @@ public class SearchManager {
         long timeGlobalPositionStart = System.currentTimeMillis();
         SearchManager.gtpmSearcher = new CodeSearcher(Util.GTPM_INDEX_DIR,
                 "key");
+        logger.info("initIndexEnv: "+Util.GTPM_INDEX_DIR);
         this.timeGlobalTokenPositionCreation = System.currentTimeMillis()
                 - timeGlobalPositionStart;
     }
@@ -691,6 +697,7 @@ public class SearchManager {
 
     private void doIndex() throws InterruptedException, FileNotFoundException {
         File datasetDir = new File(SearchManager.DATASET_DIR);
+        logger.info(SearchManager.DATASET_DIR+datasetDir.getName());
         if (datasetDir.isDirectory()) {
             logger.info("Directory: " + datasetDir.getAbsolutePath());
             for (File inputFile : Util.getAllFilesRecur(datasetDir)) {
