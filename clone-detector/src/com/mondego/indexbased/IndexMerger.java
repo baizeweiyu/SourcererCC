@@ -43,9 +43,9 @@ public class IndexMerger {
         logger.info("pppppppppppppppppppppppppppopulate Index dirs "+IndexMerger.nodeDirs.length);
         for (File node : IndexMerger.nodeDirs) {
             String invertedIndexDirPath = node.getAbsolutePath()
-                    + "/index/shards/" + shardId;
+                    + File.separator +  "index" + File.separator + "shards" + File.separator + shardId;
             String forwardIndexDirPath = node.getAbsolutePath()
-                    + "/fwdindex/shards/" + shardId;
+                    + File.separator + "fwdindex" + File.separator + "shards" + File.separator + shardId;
             logger.info("invertedIndexDirPath:"+invertedIndexDirPath);
             logger.info("forwardIndexDirPath"+forwardIndexDirPath);
             File invertedIndexFile = new File(invertedIndexDirPath);
@@ -90,9 +90,9 @@ public class IndexMerger {
         mergePolicy.setMaxCFSSegmentSizeMB(0);
         IndexWriter indexWriter = null;
         try {
-            FSDirectory dir = FSDirectory.open(new File(properties.getProperty("RESULT_DIR_PATH")+"index"+"/"+shardId));
+            FSDirectory dir = FSDirectory.open(new File(properties.getProperty("RESULT_DIR_PATH")+"index"+File.separator+shardId));
             logger.info("path: "+dir.toString());
-            //FSDirectory dir = FSDirectory.open(new File(Util.INDEX_DIR+"/"+shardId));
+            //FSDirectory dir = FSDirectory.open(new File(Util.INDEX_DIR+File.separator+shardId));
             indexWriter = new IndexWriter(dir, indexWriterConfig);
             FSDirectory[] dirs = this.invertedIndexDirectories
                     .toArray(new FSDirectory[this.invertedIndexDirectories
@@ -120,9 +120,9 @@ public class IndexMerger {
         fwdmergePolicy.setMaxCFSSegmentSizeMB(0);
         indexWriter = null;
         try {
-            FSDirectory dir = FSDirectory.open(new File(properties.getProperty("RESULT_DIR_PATH")+"fwdindex"+"/"+shardId));
+            FSDirectory dir = FSDirectory.open(new File(properties.getProperty("RESULT_DIR_PATH")+"fwdindex"+File.separator+shardId));
             logger.info("path: "+dir.toString());
-            //FSDirectory dir = FSDirectory.open(new File(Util.FWD_INDEX_DIR+"/"+shardId));
+            //FSDirectory dir = FSDirectory.open(new File(Util.FWD_INDEX_DIR+File.separator+shardId));
             indexWriter = new IndexWriter(dir, fwdIndexWriterConfig);
             FSDirectory[] dirs = this.forwardIndexDirectories
                     .toArray(new FSDirectory[this.forwardIndexDirectories

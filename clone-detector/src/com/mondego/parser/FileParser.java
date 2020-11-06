@@ -45,11 +45,11 @@ public class FileParser {
 
     public FileParser(String processName) throws IOException {
         this.processName=processName;
-        this.datasetPath = "input/dataset";
-        this.bookkeepingPath = "input/bookkeeping";
-        this.parsedFilePath = this.datasetPath + "/" + processName
+        this.datasetPath = "input" + File.separator + "dataset";
+        this.bookkeepingPath = "input" + File.separator + "bookkeeping";
+        this.parsedFilePath = this.datasetPath + File.separator + processName
                 + "_clone-input.txt";
-        this.idFilePath = this.bookkeepingPath + "/" + processName
+        this.idFilePath = this.bookkeepingPath + File.separator + processName
                 + "_idFile.txt";
         Util.createDirs(this.datasetPath);
         Util.createDirs(this.bookkeepingPath);

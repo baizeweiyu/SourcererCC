@@ -294,9 +294,9 @@ public class SearchManager {
     public static void stepInitIndexSearch(String[] arg, Properties propertiesPM)
             throws IOException, ParseException, InterruptedException {
         long start_time = System.nanoTime();
-        logger.info("user.dir is: " + System.getProperty("user.dir"));
-        logger.info("root dir is:" + System.getProperty("properties.rootDir"));
-        SearchManager.ROOT_DIR = System.getProperty("properties.rootDir");
+        // logger.info("user.dir is: " + System.getProperty("user.dir"));
+        // logger.info("root dir is:" + System.getProperty("properties.rootDir"));
+        // SearchManager.ROOT_DIR = System.getProperty("properties.rootDir");
         properties = propertiesPM;
         //InputStreamReader isr = null;
         //logger.info("reading Q values from properties file");
@@ -318,9 +318,9 @@ public class SearchManager {
                 properties.getProperty("IS_STATUS_REPORTER_ON"));
         SearchManager.NODE_PREFIX = properties.getProperty("NODE_PREFIX")
                 .toUpperCase();
-        SearchManager.OUTPUT_DIR = SearchManager.RESULT_DIR + SearchManager.NODE_PREFIX + "/"
+        SearchManager.OUTPUT_DIR = SearchManager.RESULT_DIR + SearchManager.NODE_PREFIX + File.separator
                 + properties.getProperty("OUTPUT_DIR");
-        SearchManager.QUERY_DIR_PATH = SearchManager.RESULT_DIR + SearchManager.NODE_PREFIX + "/"
+        SearchManager.QUERY_DIR_PATH = SearchManager.RESULT_DIR + SearchManager.NODE_PREFIX + File.separator
                 + properties.getProperty("QUERY_DIR_PATH");
         logger.debug("Query path:" + SearchManager.QUERY_DIR_PATH);
         SearchManager.LOG_PROCESSED_LINENUMBER_AFTER_X_LINES = Integer
@@ -493,8 +493,8 @@ public class SearchManager {
 
     private void backupOutput() throws IOException {
         theInstance.readRunMetadata();
-        String destDir = Util.OUTPUT_BACKUP_DIR + "/" + SearchManager.RUN_COUNT
-                + "/" + SearchManager.NODE_PREFIX;
+        String destDir = Util.OUTPUT_BACKUP_DIR + File.separator + SearchManager.RUN_COUNT
+                + File.separator + SearchManager.NODE_PREFIX;
         Util.createDirs(destDir); // creates if it doesn't exist
         String sourceDir = SearchManager.OUTPUT_DIR
                 + SearchManager.th / SearchManager.MUL_FACTOR;
@@ -513,7 +513,7 @@ public class SearchManager {
         String previousDataFolder = SearchManager.RESULT_DIR + "oldData/";
         Util.createDirs(previousDataFolder);
         File sourceDataFile = new File(
-                SearchManager.DATASET_DIR + "/" + Util.QUERY_FILE_NAME);
+                SearchManager.DATASET_DIR + File.separator + Util.QUERY_FILE_NAME);
         String targetFileName = previousDataFolder + System.currentTimeMillis()
                 + "_" + Util.QUERY_FILE_NAME;
         sourceDataFile.renameTo(new File(targetFileName));
@@ -625,7 +625,7 @@ public class SearchManager {
         // TODO Auto-generated method stub
         BufferedReader br = null;
         String filename = SearchManager.OUTPUT_DIR
-                + SearchManager.th / SearchManager.MUL_FACTOR + "/recovery.txt";
+                + SearchManager.th / SearchManager.MUL_FACTOR + File.separator + "recovery.txt";
         try {
             br = new BufferedReader(new InputStreamReader(
                     new FileInputStream(filename), "UTF-8"));
@@ -778,7 +778,7 @@ public class SearchManager {
                         "");
                 try {
                     String cloneReportFileName = SearchManager.OUTPUT_DIR
-                            + SearchManager.th / SearchManager.MUL_FACTOR + "/"
+                            + SearchManager.th / SearchManager.MUL_FACTOR + File.separator
                             + filename + "clones_index_WITH_FILTER.txt";
                     File cloneReportFile = new File(cloneReportFileName);
                     if (cloneReportFile.exists()) {
@@ -790,7 +790,7 @@ public class SearchManager {
                             SearchManager.OUTPUT_DIR
                                     + SearchManager.th
                                             / SearchManager.MUL_FACTOR
-                                    + "/" + filename
+                                    + File.separator + filename
                                     + "clones_index_WITH_FILTER.txt",
                             this.appendToExistingFile);
                     // recoveryWriter
@@ -828,9 +828,9 @@ public class SearchManager {
         SearchManager.searcher = new ArrayList<CodeSearcher>();
         for (Shard shard : SearchManager.shards) {
             SearchManager.fwdSearcher.add(new CodeSearcher(
-                    Util.FWD_INDEX_DIR + "/" + shard.getId(), "id"));
+                    Util.FWD_INDEX_DIR + File.separator + shard.getId(), "id"));
             SearchManager.searcher.add(new CodeSearcher(
-                    Util.INDEX_DIR + "/" + shard.getId(), "tokens"));
+                    Util.INDEX_DIR + File.separator + shard.getId(), "tokens"));
         }
         SearchManager.gtpmSearcher = new CodeSearcher(Util.GTPM_INDEX_DIR,
                 "key");

@@ -43,9 +43,9 @@ public class Aggregator {
         }
         try {
             Util.createDirs(aggregator.output);
-            aggregator.inputFile = aggregator.output+"/" + aggregator.project
+            aggregator.inputFile = aggregator.output+File.separator + aggregator.project
                     + "clonesAnalysis_WITH_FILTER.csv";
-            String filename = aggregator.output+"/summary.csv";
+            String filename = aggregator.output+ File.separator + "summary.csv";
             File file = new File(filename);
             boolean skipHeader = false;
             if (file.exists()) {
@@ -56,7 +56,7 @@ public class Aggregator {
                 String header = "project,time_with_filter, time_without_filter,comparision_with_filter,comparision_without_filter,clones_count,threshold,numCandidates,numPairs";
                 Util.writeToFile(aggregator.summryWriter, header, true);
             }
-            aggregator.inputFile = aggregator.output+"/" + aggregator.project
+            aggregator.inputFile = aggregator.output+File.separator + aggregator.project
                     + "clonesAnalysis_WITH_FILTER.csv";
             System.out.println("reading file : " + aggregator.inputFile);
             File input = new File(aggregator.inputFile);
@@ -70,7 +70,7 @@ public class Aggregator {
             aggregator.avg_comparisions_with_filter=aggregator.comparisions_with_filter/aggregator.readings;
             aggregator.avg_time_with_filter=aggregator.time_with_filter/aggregator.readings;
             aggregator.readings=0;
-            aggregator.inputFile = aggregator.output+"/" + aggregator.project
+            aggregator.inputFile = aggregator.output+File.separator + aggregator.project
                     + "clonesAnalysis_NO_FILTER.csv";
             
             System.out.println("reading file : " + aggregator.inputFile);
