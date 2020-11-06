@@ -309,9 +309,9 @@ public class SearchManager {
         String[] params = new String[2];
         params[0] = arg[0];
         params[1] = arg[1];
-        SearchManager.DATASET_DIR = SearchManager.ROOT_DIR
-                + properties.getProperty("DATASET_DIR_PATH");
         SearchManager.RESULT_DIR = properties.getProperty("RESULT_DIR_PATH");
+        SearchManager.DATASET_DIR = SearchManager.RESULT_DIR
+                + properties.getProperty("DATASET_DIR_PATH");
         SearchManager.isGenCandidateStats = Boolean.parseBoolean(
                 properties.getProperty("IS_GEN_CANDIDATE_STATISTICS"));
         SearchManager.isStatusCounterOn = Boolean.parseBoolean(
@@ -559,25 +559,26 @@ public class SearchManager {
     }
 
     private static int getNodes() {
-        if (-1 == SearchManager.totalNodes) {
-            File searchMertadaFile = new File(Util.SEARCH_METADATA);
-            logger.info("search metadata:"+Util.SEARCH_METADATA);
-            try {
-                BufferedReader br = Util.getReader(searchMertadaFile);
-                String line = br.readLine();
-                if (null != line) {
-                    SearchManager.totalNodes = Integer.parseInt(line.trim());
-                    logger.info("total nodes cccccccccccccccccccccccccccccccccccchange:"+SearchManager.totalNodes);
-                    return SearchManager.totalNodes;
-                }
-            } catch (FileNotFoundException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }
+//        if (-1 == SearchManager.totalNodes) {
+//            File searchMertadaFile = new File(Util.SEARCH_METADATA);
+//            logger.info("search metadata:"+Util.SEARCH_METADATA);
+//            try {
+//                BufferedReader br = Util.getReader(searchMertadaFile);
+//                String line = br.readLine();
+//                if (null != line) {
+//                    SearchManager.totalNodes = Integer.parseInt(line.trim());
+//                    logger.info("total nodes cccccccccccccccccccccccccccccccccccchange:"+SearchManager.totalNodes);
+//                    return SearchManager.totalNodes;
+//                }
+//            } catch (FileNotFoundException e) {
+//                // TODO Auto-generated catch block
+//                e.printStackTrace();
+//            } catch (IOException e) {
+//                // TODO Auto-generated catch block
+//                e.printStackTrace();
+//            }
+//        }
+        SearchManager.totalNodes = 1;
         return SearchManager.totalNodes;
     }
 
@@ -760,7 +761,7 @@ public class SearchManager {
                 }
             }
         } else {
-            logger.error("File: " + datasetDir.getName()
+            logger.error("File: " + datasetDir.getAbsolutePath()
                     + " is not a directory. Exiting now");
             System.exit(1);
         }

@@ -61,10 +61,11 @@ public class Util {
     public static final String QUERY_FILE_NAME = "blocks.file";
     public static final String OUTPUT_BACKUP_DIR = SearchManager.RESULT_DIR
             + "backup_output";
-    public static final String SEARCH_METADATA = SearchManager.RESULT_DIR
-            + "search_metadata.txt";
+//    public static final String SEARCH_METADATA = SearchManager.RESULT_DIR
+//            + "search_metadata.txt";
     public static final String RUN_METADATA = SearchManager.RESULT_DIR
             + "run_metadata.scc";
+//    public static String SEARCH_METADATA = "1";
     private static final Logger logger = LogManager.getLogger(Util.class);
 
     /**

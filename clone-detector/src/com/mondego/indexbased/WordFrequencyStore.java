@@ -134,7 +134,7 @@ public class WordFrequencyStore implements ITokensFileProcessor {
             // shutdown
             shutdown();
         } else {
-            logger.error("File: " + queryDir.getName() + " is not a directory. Exiting now");
+            logger.error("File: " + queryDir.getAbsolutePath() + " is not a directory. Exiting now");
             System.exit(1);
         }
     }
