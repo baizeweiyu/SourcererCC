@@ -644,8 +644,8 @@ public class SearchManager {
                 }
             }
         } catch (FileNotFoundException e) {
-            logger.error(
-                    SearchManager.NODE_PREFIX + ", " + filename + " not found");
+//            logger.error(
+//                    SearchManager.NODE_PREFIX + ", " + filename + " not found");
         } catch (UnsupportedEncodingException e) {
             logger.error(SearchManager.NODE_PREFIX
                     + ", error in populateCompleteQueries" + e.getMessage());

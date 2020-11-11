@@ -11,7 +11,12 @@ import datetime as dt
 import zipfile
 import extractPythonFunction
 import extractJavaFunction
+import extractCFunction
 import io
+#import importlib
+
+#importlib.reload(sys)
+#sys.setdefaultencoding('utf-8')
 
 try:
   from configparser import ConfigParser
@@ -102,7 +107,7 @@ def tokenize_files(file_string, comment_inline_pattern, comment_open_close_patte
 
   h_time = dt.datetime.now()
   m = hashlib.md5()
-  m.update(file_string)
+  m.update(file_string.encode("utf8"))
   file_hash = m.hexdigest()
   hash_time = (dt.datetime.now() - h_time).microseconds
   
@@ -152,13 +157,13 @@ def tokenize_files(file_string, comment_inline_pattern, comment_open_close_patte
 
   t_time = dt.datetime.now()
   #SourcererCC formatting
-  tokens = ','.join(['{}@@::@@{}'.format(k, v) for k,v in file_string_for_tokenization.iteritems()])
+  tokens = ','.join(['{}@@::@@{}'.format(k, v) for k,v in file_string_for_tokenization.items()])
   t_time = (dt.datetime.now() - t_time).microseconds
 
   # MD5
   h_time = dt.datetime.now()
   m = hashlib.md5()
-  m.update(tokens)
+  m.update(tokens.encode("utf8"))
   hash_time += (dt.datetime.now() - h_time).microseconds
 
   final_tokens = (tokens_count_total,tokens_count_unique,m.hexdigest(),'@#@'+tokens)
@@ -179,6 +184,8 @@ def tokenize_blocks(file_string, comment_inline_pattern, comment_open_close_patt
     (block_linenos, blocks) = extractPythonFunction.getFunctions(file_string, logging, file_path)
   if '.java' in file_extensions:
     (block_linenos, blocks, block_names) = extractJavaFunction.getFunctions(file_string, logging, file_path, separators, comment_inline_pattern)
+  if '.c' in file_extensions:
+    (block_linenos, blocks, block_names) = extractCFunction.getFunctions(file_string, logging, file_path, separators, comment_inline_pattern)
 
   if block_linenos is None:
     logging.info('Returning None on tokenize_blocks for file %s.' % (file_path))
@@ -188,7 +195,7 @@ def tokenize_blocks(file_string, comment_inline_pattern, comment_open_close_patt
       h_time = dt.datetime.now()
       m = hashlib.md5()
       try:
-        m.update(file_string)
+        m.update(file_string.encode("utf8"))
       except Exception as e:
         logging.info('Error on tokenize_blocks (1) (file,exception,input) (%s,%s,%s)' % (file_path,e,file_string))
       file_hash = m.hexdigest()
@@ -232,7 +239,7 @@ def tokenize_blocks(file_string, comment_inline_pattern, comment_open_close_patt
         h_time = dt.datetime.now()
         m = hashlib.md5()
         try:
-          m.update(block_string)
+          m.update(block_string.encode("utf8"))
         except Exception as e:
           logging.info('Error on tokenize_blocks (2) (file,exception,input) (%s,%s,%s)' % (file_path,e,file_string))
         block_hash = m.hexdigest()
@@ -278,13 +285,13 @@ def tokenize_blocks(file_string, comment_inline_pattern, comment_open_close_patt
         tokens_count_unique = len(block_string_for_tokenization)
         t_time = dt.datetime.now()
         #SourcererCC formatting
-        tokens = ','.join(['{}@@::@@{}'.format(k, v) for k,v in block_string_for_tokenization.iteritems()])
+        tokens = ','.join(['{}@@::@@{}'.format(k, v) for k,v in block_string_for_tokenization.items()])
         token_time += (dt.datetime.now() - t_time).microseconds
         # MD5
         h_time = dt.datetime.now()
         m = hashlib.md5()
         try:
-          m.update(tokens)
+          m.update(tokens.encode("utf8"))
         except Exception as e:
           logging.info('Error on tokenize_blocks (3) (file,exception,input) (%s,%s,%s)' % (file_path,e,file_string))
         hash_time += (dt.datetime.now() - h_time).microseconds
@@ -327,6 +334,7 @@ def process_file_contents(file_string, proj_id, file_id, container_path,
     logging.warning('Finished step2 on process_file_contents');
 
     ww_time = dt.datetime.now()
+    w_time = ww_time.microsecond
 
     try:
       for relative_id, block_data in blocks_data:
@@ -515,12 +523,12 @@ def process_zip_ball(process_num, zip_file, proj_id, proj_path, proj_url, base_f
         try:
           my_zip_file = my_file.open(file.filename,'r')
         except:
-          logging.warning('Unable to open file (1) <'+os.path.join(proj_path,file)+'> (process '+str(process_num)+')')
+          logging.warning('Unable to open file (1) <'+os.path.join(proj_path,file_path)+'> (process '+str(process_num)+')')
           continue
         zip_time += (dt.datetime.now() - z_time).microseconds
 
         if my_zip_file is None:
-          logging.warning('Unable to open file (2) <'+os.path.join(proj_path,file)+'> (process '+str(process_num)+')')
+          logging.warning('Unable to open file (2) <'+os.path.join(proj_path,file_path)+'> (process '+str(process_num)+')')
           continue
 
         try:
@@ -531,7 +539,7 @@ def process_zip_ball(process_num, zip_file, proj_id, proj_path, proj_url, base_f
           times = process_file_contents(file_string, proj_id, file_id, zip_file, file_path, file_bytes,
                           proj_url, FILE_tokens_file, FILE_stats_file, logging)
         except Exception as e:
-          logging.warning('Unable to read contents of file %s' % (os.path.join(proj_path,file)))
+          logging.warning('Unable to read contents of file %s, %s' % (os.path.join(proj_path,file_path), e))
 
         string_time += times[0]
         tokens_time += times[1]
@@ -702,8 +710,8 @@ def active_process_count(processes):
 if __name__ == '__main__':
 
   global project_format
-  project_format = sys.argv[1] # 'zipblocks' or 'folderblocks' (when want the blocks inside files)
-
+  #project_format = sys.argv[1] # 'zipblocks' or 'folderblocks' (when want the blocks inside files)
+  project_format = 'zipblocks'
   if project_format not in ['zipblocks','folderblocks']:
     print("ERROR - Please insert archive format, 'zipblocks' or 'folderblocks'!")
     sys.exit()
