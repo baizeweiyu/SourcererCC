@@ -2,7 +2,8 @@ import logging
 import multiprocessing as mp
 from multiprocessing import Process, Value, Queue
 import re
-import os, platform
+import os
+import platform
 import collections
 import tarfile
 import sys
@@ -11,6 +12,7 @@ import datetime as dt
 import zipfile
 import extractPythonFunction
 import extractJavaFunction
+# import extractCFunction
 import io
 
 # import importlib
@@ -18,10 +20,10 @@ import io
 # importlib.reload(sys)
 # sys.setdefaultencoding('utf-8')
 
-try:
-    from configparser import ConfigParser
-except ImportError:
-    from ConfigParser import ConfigParser  # ver. < 3.0
+# try:
+#     from configparser import ConfigParser
+# except ImportError:
+#     from ConfigParser import ConfigParser  # ver. < 3.0
 
 MULTIPLIER = 50000000
 
@@ -48,7 +50,7 @@ file_count = 0
 print('GO')
 
 
-def read_config():
+def read_config(workspace_path, comment_inline_p, comment_open_tag_p, comment_close_tag_p, file_extensions_p):
     global N_PROCESSES, PROJECTS_BATCH, FILE_projects_list, FILE_priority_projects
     global PATH_stats_file_folder, PATH_bookkeeping_proj_folder, PATH_tokens_file_folder, PATH_logs
     global separators, comment_inline, comment_inline_pattern, comment_open_tag, comment_close_tag, comment_open_close_pattern
@@ -60,41 +62,57 @@ def read_config():
     global proj_id_flag
 
     # instantiate
-    config = ConfigParser()
+    # config = ConfigParser()
 
     # parse existing file
-    try:
-        config.read(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'config.ini'))
-    except IOError:
-        print('ERROR - Config settings not found. Usage: $python this-script.py config-file.ini')
-        sys.exit()
+    # try:
+    #     config.read(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'config.ini'))
+    # except IOError:
+    #     print('ERROR - Config settings not found. Usage: $python this-script.py config-file.ini')
+    #     sys.exit()
 
     # Get info from config.ini into global variables
-    N_PROCESSES = config.getint('Main', 'N_PROCESSES')
-    PROJECTS_BATCH = config.getint('Main', 'PROJECTS_BATCH')
-    FILE_projects_list = config.get('Main', 'FILE_projects_list')
-    if config.has_option('Main', 'FILE_priority_projects'):
-        FILE_priority_projects = config.get('Main', 'FILE_priority_projects')
-    PATH_stats_file_folder = config.get('Folders/Files', 'PATH_stats_file_folder')
-    PATH_bookkeeping_proj_folder = config.get('Folders/Files', 'PATH_bookkeeping_proj_folder')
-    PATH_tokens_file_folder = config.get('Folders/Files', 'PATH_tokens_file_folder')
-    PATH_logs = config.get('Folders/Files', 'PATH_logs')
+    # N_PROCESSES = config.getint('Main', 'N_PROCESSES')
+    N_PROCESSES = 100
+    # PROJECTS_BATCH = config.getint('Main', 'PROJECTS_BATCH')
+    PROJECTS_BATCH = 100
+    # FILE_projects_list = config.get('Main', 'FILE_projects_list')
+    FILE_projects_list = os.path.join(workspace_path, 'projects-list.txt')
+    # if config.has_option('Main', 'FILE_priority_projects'):
+    #     FILE_priority_projects = config.get('Main', 'FILE_priority_projects')
+    # PATH_stats_file_folder = config.get('Folders/Files', 'PATH_stats_file_folder')
+    # PATH_bookkeeping_proj_folder = config.get('Folders/Files', 'PATH_bookkeeping_proj_folder')
+    # PATH_tokens_file_folder = config.get('Folders/Files', 'PATH_tokens_file_folder')
+    # PATH_logs = config.get('Folders/Files', 'PATH_logs')
+    PATH_stats_file_folder = os.path.join(workspace_path, 'file_block_stats')
+    PATH_bookkeeping_proj_folder = os.path.join(workspace_path, 'bookkeeping_projs')
+    PATH_tokens_file_folder = os.path.join(workspace_path, 'blocks_tokens')
+    PATH_logs = os.path.join(workspace_path, 'logs')
 
     # Reading Language settings
-    separators = "; . [ ] ( ) ~ ! - + & * / % < > ^ | ? { } = # , \" \\ : $ ' ` @"  # config.get('Language', 'separators').strip('"').split(' ')
-    comment_inline = re.escape(config.get('Language', 'comment_inline'))
+    separators = "; . [ ] ( ) ~ ! - + & * / % < > ^ | ? { } = # , \" \\ : $ ' ` @"
+    # comment_inline = re.escape(config.get('Language', 'comment_inline'))
+    # comment_inline_pattern = comment_inline + '.*?$'
+    # comment_open_tag = re.escape(config.get('Language', 'comment_open_tag'))
+    # comment_close_tag = re.escape(config.get('Language', 'comment_close_tag'))
+    # comment_open_close_pattern = comment_open_tag + '.*?' + comment_close_tag
+    # file_extensions = config.get('Language', 'File_extensions').split(' ')
+    comment_inline = re.escape(comment_inline_p)
     comment_inline_pattern = comment_inline + '.*?$'
-    comment_open_tag = re.escape(config.get('Language', 'comment_open_tag'))
-    comment_close_tag = re.escape(config.get('Language', 'comment_close_tag'))
+    comment_open_tag = re.escape(comment_open_tag_p)
+    comment_close_tag = re.escape(comment_close_tag_p)
     comment_open_close_pattern = comment_open_tag + '.*?' + comment_close_tag
-    file_extensions = config.get('Language', 'File_extensions').split(' ')
+    file_extensions = file_extensions_p.split(' ')
 
     # Reading config settings
-    init_file_id = config.getint('Config', 'init_file_id')
-    init_proj_id = config.getint('Config', 'init_proj_id')
+    # init_file_id = config.getint('Config', 'init_file_id')
+    # init_proj_id = config.getint('Config', 'init_proj_id')
+    init_file_id = 3000000
+    init_proj_id = 1
 
     # flag before proj_id
-    proj_id_flag = config.getint('Config', 'init_proj_id')
+    # proj_id_flag = config.getint('Config', 'init_proj_id')
+    proj_id_flag = 1
 
 
 def tokenize_files(file_string, comment_inline_pattern, comment_open_close_pattern, separators):
@@ -187,9 +205,9 @@ def tokenize_blocks(file_string, comment_inline_pattern, comment_open_close_patt
     if '.java' in file_extensions:
         (block_linenos, blocks, block_names) = extractJavaFunction.getFunctions(file_string, logging, file_path,
                                                                                 separators, comment_inline_pattern)
-    if '.c' in file_extensions:
-        (block_linenos, blocks, block_names) = extractCFunction.getFunctions(file_string, logging, file_path,
-                                                                             separators, comment_inline_pattern)
+    # if '.c' in file_extensions:
+    #     (block_linenos, blocks, block_names) = extractCFunction.getFunctions(file_string, logging, file_path,
+    #                                                                          separators, comment_inline_pattern)
 
     if block_linenos is None:
         logging.info('Returning None on tokenize_blocks for file %s.' % (file_path))
@@ -681,8 +699,8 @@ def process_one_project(process_num, proj_id, proj_path, base_file_id,
 
 
 def process_projects(process_num, list_projects, base_file_id, global_queue, project_format):
-    if platform.system() == 'Windows':
-        read_config()
+    # if platform.system() == 'Windows':
+    #     read_config()
 
     # Logging code
     FORMAT = '[%(levelname)s] (%(threadName)s) %(message)s'
@@ -757,15 +775,21 @@ if __name__ == '__main__':
     global project_format
     # project_format = sys.argv[1] # 'zipblocks' or 'folderblocks' (when want the blocks inside files)
     project_format = 'zipblocks'
-    if project_format not in ['zipblocks', 'folderblocks']:
-        print("ERROR - Please insert archive format, 'zipblocks' or 'folderblocks'!")
-        sys.exit()
+    # if project_format not in ['zipblocks', 'folderblocks']:
+    #     print("ERROR - Please insert archive format, 'zipblocks' or 'folderblocks'!")
+    #     sys.exit()
 
-    read_config()
+    workspace_path = sys.argv[1]
+    comment_inline_p = sys.argv[2]
+    comment_open_tag_p = sys.argv[3]
+    comment_close_tag_p = sys.argv[4]
+    file_extensions_p = sys.argv[5]
+
+    read_config(workspace_path, comment_inline_p, comment_open_tag_p, comment_close_tag_p, file_extensions_p)
     p_start = dt.datetime.now()
 
     prio_proj_paths = []
-    if FILE_priority_projects != None:
+    if FILE_priority_projects is not None:
         with open(FILE_priority_projects) as f:
             for line in f:
                 line_split = line[:-1].split(',')  # [:-1] to strip final character which is '\n'
