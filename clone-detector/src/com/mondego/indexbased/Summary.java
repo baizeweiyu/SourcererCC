@@ -13,13 +13,10 @@ import java.util.*;
 public class Summary {
     private static final Logger logger = LogManager.getLogger(Summary.class);
 
-    public static void readJson(Properties properties, String th)
-            throws IOException{
+    public static void readJson(String userPath, String th)
+            throws IOException {
 
-        String userPath = properties.getProperty("RESULT_DIR_PATH");
-
-//        Gson resultGson = new GsonBuilder().enableComplexMapKeySerialization().create();
-        Map<String, String> result = new LinkedHashMap<String, String>();
+        Map<String, String> result = new HashMap<>();
         result.put("function id", "");
         result.put("file name and path", "");
         result.put("similarity", ">=" + th + "0%");
@@ -28,8 +25,7 @@ public class Summary {
         result.put("start line", "");
         result.put("end line", "");
 
-//        Gson fileResultGson = new GsonBuilder().enableComplexMapKeySerialization().create();
-        Map<String, Object> fileResult = new LinkedHashMap<String, Object>();
+        Map<String, Object> fileResult = new HashMap<>();
         float t = Float.parseFloat(th);
         if ( (t - 8.0 >= 0.0) && (9.0 - t > 0.0) ){
             fileResult.put("type", "type3");
@@ -42,8 +38,7 @@ public class Summary {
         }
         fileResult.put("result", result);
 
-//        Gson detectResultGson = new GsonBuilder().enableComplexMapKeySerialization().create();
-        Map<String, Object> detectResult = new LinkedHashMap<String, Object>();
+        Map<String, Object> detectResult = new HashMap<>();
         detectResult.put("file name and path", "");
         detectResult.put("function id", "");
         detectResult.put("LOC", "");
@@ -52,7 +47,7 @@ public class Summary {
         detectResult.put("end line", "");
         detectResult.put("file result", fileResult);
 
-        List<Map<String, Object>> detectList = new ArrayList<Map<String, Object>>();
+        List<Map<String, Object>> detectList = new ArrayList<>();
 
         Gson objectGson = new Gson();
         Map<String, Object> object = new HashMap<>();
@@ -169,7 +164,7 @@ public class Summary {
 //            }
 //        }
 
-        readJson(properties, "9");
+//        readJson(properties, "9");
 
     }
 }
