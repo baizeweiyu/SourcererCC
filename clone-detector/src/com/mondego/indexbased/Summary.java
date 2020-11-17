@@ -66,7 +66,8 @@ public class Summary {
             File s = new File(userPath + "file_block_stats" + File.separator + "files-stats-0.stats");
             BufferedReader fileStats = new BufferedReader(new FileReader(s));
             String file_s;
-            int done = 0while ((done < 4) && ((file_s = fileStats.readLine()) != null)) {
+            int done = 0;
+            while ((done < 4) && ((file_s = fileStats.readLine()) != null)) {
                 String[] status = file_s.split(",");
 
                 if (fileID[1].substring(5, 12).equals(status[1])) {
