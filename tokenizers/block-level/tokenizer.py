@@ -73,9 +73,9 @@ def read_config(workspace_path, comment_inline_p, comment_open_tag_p, comment_cl
 
     # Get info from config.ini into global variables
     # N_PROCESSES = config.getint('Main', 'N_PROCESSES')
-    N_PROCESSES = 100
+    N_PROCESSES = 8
     # PROJECTS_BATCH = config.getint('Main', 'PROJECTS_BATCH')
-    PROJECTS_BATCH = 100
+    PROJECTS_BATCH = 1
     # FILE_projects_list = config.get('Main', 'FILE_projects_list')
     FILE_projects_list = os.path.join(workspace_path, 'projects-list.txt')
     # if config.has_option('Main', 'FILE_priority_projects'):
