@@ -13,25 +13,25 @@ import java.util.*;
 public class Summary {
     private static final Logger logger = LogManager.getLogger(Summary.class);
 
-    public static void readJson(String userPath, String th)
+    public static String readJsonResult(String userPath, String threshold)
             throws IOException {
 
         Map<String, String> result = new HashMap<>();
         result.put("function_id", "");
         result.put("file_name_and_path", "");
-        result.put("similarity", ">=" + th + "0%");
+        result.put("similarity", ">=" + threshold + "0%");
         result.put("LOC", "");
         result.put("total_tokens", "");
         result.put("start_line", "");
         result.put("end_line", "");
 
         Map<String, Object> fileResult = new HashMap<>();
-        float t = Float.parseFloat(th);
-        if ((t - 8.0 >= 0.0) && (9.0 - t > 0.0)) {
+        float thresholdVal = Float.parseFloat(threshold);
+        if ((thresholdVal - 8.0 >= 0.0) && (9.0 - thresholdVal > 0.0)) {
             fileResult.put("type", "type3");
-        } else if ((t - 9.0 >= 0.0) && (10.0 - t > 0.0)) {
+        } else if ((thresholdVal - 9.0 >= 0.0) && (10.0 - thresholdVal > 0.0)) {
             fileResult.put("type", "type2");
-        } else if (t - 10.0 == 0.0) {
+        } else if (thresholdVal - 10.0 == 0.0) {
             fileResult.put("type", "type1");
         }
         fileResult.put("result", result);
@@ -53,10 +53,8 @@ public class Summary {
         object.put("user_workspace", userPath);
         object.put("clone_detection result", detectList);
 
-//        File re = new File(userPath + "NODE/output"+th+".0/blocksclones_index_WITH_FILTER.txt");
-//        BufferedReader br = new BufferedReader(new FileReader(re));
         BufferedReader br = new BufferedReader(new InputStreamReader(
-                new FileInputStream(userPath + "NODE" + File.separator + "output" + th + ".0"
+                new FileInputStream(userPath + "NODE" + File.separator + "output" + threshold + ".0"
                         + File.separator + "blocksclones_index_WITH_FILTER.txt"), StandardCharsets.UTF_8));
         String line;
         while ((line = br.readLine()) != null) {
@@ -65,10 +63,10 @@ public class Summary {
 
             File s = new File(userPath + "file_block_stats" + File.separator + "files-stats-0.stats");
             BufferedReader fileStats = new BufferedReader(new FileReader(s));
-            String file_s;
+            String fileStatus;
             int done = 0;
-            while ((done < 4) && ((file_s = fileStats.readLine()) != null)) {
-                String[] status = file_s.split(",");
+            while ((done < 4) && ((fileStatus = fileStats.readLine()) != null)) {
+                String[] status = fileStatus.split(",");
 
                 if (fileID[1].substring(5, 12).equals(status[1])) {
                     status[2] = status[2].replace('"', ' ');
@@ -98,17 +96,8 @@ public class Summary {
             logger.info(detectList);
         }
         object.put("clone detection result", detectList);
-        String jsonString = objectGson.toJson(object);
-        System.out.println(jsonString);
 
-        File fj = new File(userPath + "output.json");
-        Writer o = new OutputStreamWriter(new FileOutputStream(fj));
-//        String jsonString = object.toString();
-        logger.info(jsonString);
-        o.write(jsonString);
-        o.close();
-
-
+        return objectGson.toJson(object);
     }
 
     public static void main(String[] args)
@@ -160,7 +149,7 @@ public class Summary {
 //            }
 //        }
 
-//        readJson(properties, "9");
+//        readJsonResult(properties, "9");
 
     }
 }
