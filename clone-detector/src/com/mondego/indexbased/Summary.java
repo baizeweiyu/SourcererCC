@@ -1,7 +1,6 @@
 package com.mondego.indexbased;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
