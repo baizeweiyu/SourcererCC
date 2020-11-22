@@ -3,6 +3,7 @@ import multiprocessing as mp
 from multiprocessing import Process, Value, Queue
 import re
 import os
+import os.path
 import platform
 import collections
 import tarfile
@@ -769,6 +770,33 @@ def active_process_count(processes):
             count += 1
     return count
 
+def merge_file_path(workspace_path):
+# merge blocks_tokens file_block_stats
+    tokens_path = os.path.join(workspace_path, 'blocks_tokens')
+    tokens_file = os.listdir(tokens_path)
+    stats_path = os.path.join(workspace_path, 'file_block_stats')
+    stats_file = os.listdir(stats_path)
+
+    block_file_path = os.path.join(workspace_path, 'blocks.file')
+    block_file = open(block_file_path, 'w')
+
+    stats_merge_path = os.path.join(workspace_path, 'file-stats.stats')
+    stats_merge = open(stats_merge_path, 'w')
+    for file_name in tokens_file:
+        file_path = tokens_path + '/' + file_name
+        for line in open(file_path):
+            block_file.writelines(line)
+            block_file.write('\n')
+    block_file.close()
+
+
+    for file_name in stats_file:
+        file_path = stats_path + '/' + file_name
+        for line in open(file_path):
+            stats_merge.writelines(line)
+            stats_merge.write('\n')
+
+    stats_merge.close()
 
 if __name__ == '__main__':
 
@@ -784,6 +812,13 @@ if __name__ == '__main__':
     comment_open_tag_p = sys.argv[3]
     comment_close_tag_p = sys.argv[4]
     file_extensions_p = sys.argv[5]
+
+
+    # workspace_path = '/home/xinxin/Desktop/code_clone/output/'
+    # comment_inline_p = '//'
+    # comment_open_tag_p = '/*'
+    # comment_close_tag_p = '*/'
+    # file_extensions_p = '.java'
 
     read_config(workspace_path, comment_inline_p, comment_open_tag_p, comment_close_tag_p, file_extensions_p)
     p_start = dt.datetime.now()
@@ -854,3 +889,5 @@ if __name__ == '__main__':
 
     p_elapsed = dt.datetime.now() - p_start
     print("*** All done. %s files in %s" % (file_count, p_elapsed))
+
+    merge_file_path(workspace_path)
