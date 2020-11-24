@@ -786,7 +786,6 @@ def merge_file_path(workspace_path):
         file_path = tokens_path + '/' + file_name
         for line in open(file_path):
             block_file.writelines(line)
-            block_file.write('\n')
     block_file.close()
 
 
@@ -794,7 +793,6 @@ def merge_file_path(workspace_path):
         file_path = stats_path + '/' + file_name
         for line in open(file_path):
             stats_merge.writelines(line)
-            stats_merge.write('\n')
 
     stats_merge.close()
 
@@ -807,18 +805,18 @@ if __name__ == '__main__':
     #     print("ERROR - Please insert archive format, 'zipblocks' or 'folderblocks'!")
     #     sys.exit()
 
-    workspace_path = sys.argv[1]
-    comment_inline_p = sys.argv[2]
-    comment_open_tag_p = sys.argv[3]
-    comment_close_tag_p = sys.argv[4]
-    file_extensions_p = sys.argv[5]
+    # workspace_path = sys.argv[1]
+    # comment_inline_p = sys.argv[2]
+    # comment_open_tag_p = sys.argv[3]
+    # comment_close_tag_p = sys.argv[4]
+    # file_extensions_p = sys.argv[5]
 
 
-    # workspace_path = '/home/xinxin/Desktop/code_clone/output/'
-    # comment_inline_p = '//'
-    # comment_open_tag_p = '/*'
-    # comment_close_tag_p = '*/'
-    # file_extensions_p = '.java'
+    workspace_path = '/home/xinxin/Desktop/code_clone/output/'
+    comment_inline_p = '//'
+    comment_open_tag_p = '/*'
+    comment_close_tag_p = '*/'
+    file_extensions_p = '.java'
 
     read_config(workspace_path, comment_inline_p, comment_open_tag_p, comment_close_tag_p, file_extensions_p)
     p_start = dt.datetime.now()
