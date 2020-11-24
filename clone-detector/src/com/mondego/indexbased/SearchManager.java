@@ -215,7 +215,7 @@ public class SearchManager {
             indexerWriters = new ArrayList<IndexWriter>();
             this.createShards(true);
 
-            logger.error("action: " + SearchManager.ACTION
+            logger.info("action: " + SearchManager.ACTION
                     + System.lineSeparator() + "threshold: " + args[1]
                     + System.lineSeparator() + " BQ_THREADS: "
                     + this.threadsToProcessBagsToSortQueue

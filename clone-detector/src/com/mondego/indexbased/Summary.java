@@ -58,9 +58,9 @@ public class Summary {
         String line;
         while ((line = br.readLine()) != null) {
             String[] fileID = line.split(",");
-            logger.info(line + 'y' + fileID[0] + ' ' + fileID[1] + ' ' + fileID[2] + ' ' + fileID[3]);
+//            logger.info(line + 'y' + fileID[0] + ' ' + fileID[1] + ' ' + fileID[2] + ' ' + fileID[3]);
 
-            File s = new File(userPath + "file_block_stats" + File.separator + "files-stats-0.stats");
+            File s = new File(userPath + "file-stats.stats");
             BufferedReader fileStats = new BufferedReader(new FileReader(s));
             String fileStatus;
             int done = 0;
@@ -92,10 +92,9 @@ public class Summary {
             fileResult.put("result", result);
             detectResult.put("file_result", fileResult);
             detectList.add(detectResult);
-            logger.info(detectList);
         }
         object.put("clone detection result", detectList);
-
+        logger.info(detectList);
         return objectGson.toJson(object);
     }
 
@@ -104,7 +103,7 @@ public class Summary {
 
         Properties properties = new Properties();
 
-        properties.setProperty("RESULT_DIR_PATH", "/home/xinxin/Desktop/kuku/");
+        properties.setProperty("RESULT_DIR_PATH", "/home/xinxin/Desktop/code_clone/output/");
 
         properties.setProperty("NODE_PREFIX", "NODE");
         properties.setProperty("QUERY_DIR_PATH", "query");
@@ -148,7 +147,7 @@ public class Summary {
 //            }
 //        }
 
-//        readJsonResult(properties, "9");
+        readJsonResult(properties.getProperty("RESULT_DIR_PATH"), "9");
 
     }
 }
