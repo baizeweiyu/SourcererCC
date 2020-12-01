@@ -422,8 +422,12 @@ public class SearchManager {
         theInstance.genReport();
         Util.closeOutputFile(theInstance.reportWriter);
         try {
-            Util.closeOutputFile(SearchManager.clonesWriter);
-            Util.closeOutputFile(SearchManager.recoveryWriter);
+//            Util.closeOutputFile(SearchManager.clonesWriter);
+//            Util.closeOutputFile(SearchManager.recoveryWriter);
+            SearchManager.clonesWriter.flush();
+            SearchManager.clonesWriter.close();
+            SearchManager.recoveryWriter.flush();
+            SearchManager.recoveryWriter.close();
             if (SearchManager.ACTION.equals(ACTION_SEARCH)) {
                 theInstance.backupOutput();
             }
@@ -749,8 +753,6 @@ public class SearchManager {
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (ParseException e) {
                     e.printStackTrace();
                 } catch (Exception e) {
                     logger.error(SearchManager.NODE_PREFIX

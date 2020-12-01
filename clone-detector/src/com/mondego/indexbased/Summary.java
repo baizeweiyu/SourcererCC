@@ -7,53 +7,63 @@ import org.apache.logging.log4j.Logger;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class Summary {
     private static final Logger logger = LogManager.getLogger(Summary.class);
 
-    public static String readJsonResult(String userPath, String threshold)
+
+    public static String readJsonResult(String userPath, String threshold, String startTime, String endTime)
             throws IOException {
 
-        Map<String, String> result = new HashMap<>();
-        result.put("function_id", "");
-        result.put("file_name_and_path", "");
-        result.put("similarity", ">=" + threshold + "0%");
-        result.put("LOC", "");
-        result.put("total_tokens", "");
-        result.put("start_line", "");
-        result.put("end_line", "");
+//        for (String th : type) {
+//
+//        }
+//        String threshold = "";
+//        Map<String, String> result = new HashMap<>();
+//        result.put("function_id", "");
+//        result.put("file_name_and_path", "");
+//        result.put("similarity", ">=" + threshold + "%");
+//        result.put("LOC", "");
+//        result.put("start_line", "");
+//        result.put("end_line", "");
 
-        Map<String, Object> fileResult = new HashMap<>();
-        float thresholdVal = Float.parseFloat(threshold);
-        if ((thresholdVal - 8.0 >= 0.0) && (9.0 - thresholdVal > 0.0)) {
-            fileResult.put("type", "type3");
-        } else if ((thresholdVal - 9.0 >= 0.0) && (10.0 - thresholdVal > 0.0)) {
-            fileResult.put("type", "type2");
-        } else if (thresholdVal - 10.0 == 0.0) {
-            fileResult.put("type", "type1");
-        }
-        fileResult.put("result", result);
+//        Map<String, Object> fileResult = new HashMap<>();
+//        float thresholdVal = Float.parseFloat(threshold);
+//        if ((thresholdVal - 8.0 >= 0.0) && (9.0 - thresholdVal > 0.0)) {
+//            fileResult.put("type", "type3");
+//        } else if ((thresholdVal - 9.0 >= 0.0) && (10.0 - thresholdVal > 0.0)) {
+//            fileResult.put("type", "type2");
+//        } else if (thresholdVal - 10.0 == 0.0) {
+//            fileResult.put("type", "type1");
+//        }
+//        fileResult.put("result", result);
 
-        Map<String, Object> detectResult = new HashMap<>();
-        detectResult.put("file_name_and_path", "");
-        detectResult.put("function_id", "");
-        detectResult.put("LOC", "");
-        detectResult.put("total_tokens", "");
-        detectResult.put("start_line", "");
-        detectResult.put("end_line", "");
-        detectResult.put("file_result", fileResult);
+//        Map<String, Object> cloneDetectResult = new HashMap<>();
+//        cloneDetectResult.put("file_name_and_path", "");
+//        cloneDetectResult.put("function_id", "");
+//        cloneDetectResult.put("LOC", "");
+//        cloneDetectResult.put("start_line", "");
+//        cloneDetectResult.put("end_line", "");
+//        cloneDetectResult.put("file_result", fileResult);
 
         List<Map<String, Object>> detectList = new ArrayList<>();
 
+        List<String> zipID = new ArrayList<>();
+        List<Map<String, Object>> openSourceLibrary = new ArrayList<>();
+
         Gson objectGson = new Gson();
         Map<String, Object> object = new HashMap<>();
-        object.put("method", "SourcererCC code clone");
+        object.put("method", "SourcererCC_code_clone");
         object.put("user_workspace", userPath);
-        object.put("clone_detection result", detectList);
+        object.put("clone_detect_start_time", startTime);
+        object.put("clone_detect_end_time", endTime);
+        object.put("clone_detection_result", detectList);
+
 
         BufferedReader br = new BufferedReader(new InputStreamReader(
-                new FileInputStream(userPath + "NODE" + File.separator + "output" + threshold + ".0"
+                new FileInputStream(userPath + "NODE" + File.separator + "output" + threshold
                         + File.separator + "blocksclones_index_WITH_FILTER.txt"), StandardCharsets.UTF_8));
         String line;
         while ((line = br.readLine()) != null) {
@@ -64,25 +74,49 @@ public class Summary {
             BufferedReader fileStats = new BufferedReader(new FileReader(s));
             String fileStatus;
             int done = 0;
+            if (zipID.contains(fileID[2])) {
+                int index = zipID.indexOf(fileID[2]);
+                int number = Integer.parseInt(openSourceLibrary.get(index).get("dectect_file_number").toString());
+                number += 1;
+                openSourceLibrary.get(index).put("dectect_file_number", number);
+            }
+
+            Map<String, String> result = new HashMap<>();
+            Map<String, Object> fileResult = new HashMap<>();
+            Map<String, Object> cloneDetectResult = new HashMap<>(); 
+            
             while ((done < 4) && ((fileStatus = fileStats.readLine()) != null)) {
                 String[] status = fileStatus.split(",");
 
-                if (fileID[1].substring(5, 12).equals(status[1])) {
+                if ((!zipID.contains(fileID[2])) && (status[0].equals("f" + fileID[2]))) {
+                    zipID.add(fileID[2]);
+                    String[] name = status[2].split("/");
+                    name[1] = name[1].replace(".zip", "");
+                    name = name[1].split("-");
+                    Map<String, Object> libraryInformation = new HashMap<>();
+                    libraryInformation.put("library_name", name[0]);
+                    libraryInformation.put("library_version", name[1]);
+                    libraryInformation.put("dectect_file_number", 1);
+                    openSourceLibrary.add(libraryInformation);
+                }
+
+                if (fileID[1].substring(5).equals(status[1])) {
                     status[2] = status[2].replace('"', ' ');
-                    detectResult.put("file_name_and_path", status[2]);
+                    cloneDetectResult.put("file_name_and_path", status[2]);
                     done += 1;
                 } else if (fileID[1].equals(status[1])) {
-                    detectResult.put("function_id", status[1]);
-                    detectResult.put("LOC", status[4]);
-                    detectResult.put("start_line", status[6]);
-                    detectResult.put("end_line", status[7]);
+                    cloneDetectResult.put("function_id", status[1]);
+                    cloneDetectResult.put("LOC", status[4]);
+                    cloneDetectResult.put("start_line", status[6]);
+                    cloneDetectResult.put("end_line", status[7]);
                     done += 1;
-                } else if (fileID[3].substring(5, 12).equals(status[1])) {
+                } else if (fileID[3].substring(5).equals(status[1])) {
                     status[2] = status[2].replace('"', ' ');
                     result.put("file_name_and_path", status[2]);
                     done += 1;
                 } else if (fileID[3].equals(status[1])) {
-                    result.put("function_id", status[1]);
+//                    result.put("function_id", status[1]);
+
                     result.put("LOC", status[4]);
                     result.put("start_line", status[6]);
                     result.put("end_line", status[7]);
@@ -90,11 +124,13 @@ public class Summary {
                 }
             }
             fileResult.put("result", result);
-            detectResult.put("file_result", fileResult);
-            detectList.add(detectResult);
+            cloneDetectResult.put("file_result", fileResult);
+            detectList.add(cloneDetectResult);
         }
-        object.put("clone detection result", detectList);
-        logger.info(detectList);
+        object.put("open_source_library", openSourceLibrary);
+        object.put("clone_detection_result", detectList);
+        logger.info(objectGson.toJson(object));
+//        logger.info(zipID);
         return objectGson.toJson(object);
     }
 
@@ -103,7 +139,7 @@ public class Summary {
 
         Properties properties = new Properties();
 
-        properties.setProperty("RESULT_DIR_PATH", "/home/xinxin/Desktop/code_clone/output/");
+        properties.setProperty("RESULT_DIR_PATH", "/home/xinxin/Desktop/code_clone/fastJson/");
 
         properties.setProperty("NODE_PREFIX", "NODE");
         properties.setProperty("QUERY_DIR_PATH", "query");
@@ -125,29 +161,42 @@ public class Summary {
         properties.setProperty("VCQ_THREADS", "16");
         properties.setProperty("RCQ_THREADS", "4");
 
-//        String cmd[] = new String[] { "init", "index", "merge", "search" };
-//        for (int i = 0; i < cmd.length; i++) {
-//            String[] arg = new String[2];
-//            arg[0] = cmd[i];
-//            arg[1] = "9";
-//
-//            // InputStreamReader isr = null;
-//            // logger.info("reading Q values from properties file");
-//            // String propertiesPath = System.getProperty("properties.location");
-//            // logger.debug("propertiesPath: " + propertiesPath);
-//            // FileInputStream fis = new FileInputStream(propertiesPath);
-//            // isr = new InputStreamReader(fis, "UTF-8");
-//            // properties.load(isr);
-//            if (arg[0].equals("init") || arg[0].equals("index") || arg[0].equals("search")) {
-//                //SearchManager searchManager = new SearchManager(arg);
-//                SearchManager.stepInitIndexSearch(arg, properties);
-//            } else {
-//                //IndexMerger indexMerger = new IndexMerger();
-//                IndexMerger.stepMerge(arg, properties);
-//            }
-//        }
+        Date startDay = new Date();
+        SimpleDateFormat startDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String startTime = startDateFormat.format(startDay);
 
-        readJsonResult(properties.getProperty("RESULT_DIR_PATH"), "9");
+        String[] cmd = new String[]{"init", "index", "merge", "search"};
+        String[] type = new String[]{"7.0", "9.0", "10.0"};
+        String[] arg = new String[2];
+        for (String n : type) {
+            System.out.println(n);
+            for (String s : cmd) {
+                arg[0] = s;
+                arg[1] = n;
+
+                // InputStreamReader isr = null;
+                // logger.info("reading Q values from properties file");
+                // String propertiesPath = System.getProperty("properties.location");
+                // logger.debug("propertiesPath: " + propertiesPath);
+                // FileInputStream fis = new FileInputStream(propertiesPath);
+                // isr = new InputStreamReader(fis, "UTF-8");
+                // properties.load(isr);
+                if (arg[0].equals("init") || arg[0].equals("index") || arg[0].equals("search")) {
+                    //SearchManager searchManager = new SearchManager(arg);
+                    SearchManager.stepInitIndexSearch(arg, properties);
+                } else {
+                    //IndexMerger indexMerger = new IndexMerger();
+                    IndexMerger.stepMerge(arg, properties);
+                }
+            }
+            System.out.println("over one");
+        }
+        Date endDay = new Date();
+        SimpleDateFormat endDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String endTime = endDateFormat.format(endDay);
+        System.out.println(startTime);
+        System.out.println(endTime);
+//        readJsonResult(properties.getProperty("RESULT_DIR_PATH"), type[0], startTime, endTime);
 
     }
 }
