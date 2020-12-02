@@ -13,7 +13,8 @@ import datetime as dt
 import zipfile
 import extractPythonFunction
 import extractJavaFunction
-import extractCAddFunction
+import extractCppFunction
+import extractCFunction
 import io
 
 # import importlib
@@ -74,7 +75,7 @@ def read_config(workspace_path, comment_inline_p, comment_open_tag_p, comment_cl
 
     # Get info from config.ini into global variables
     # N_PROCESSES = config.getint('Main', 'N_PROCESSES')
-    N_PROCESSES = 8
+    N_PROCESSES = 100
     # PROJECTS_BATCH = config.getint('Main', 'PROJECTS_BATCH')
     PROJECTS_BATCH = 1
     # FILE_projects_list = config.get('Main', 'FILE_projects_list')
@@ -206,9 +207,10 @@ def tokenize_blocks(file_string, comment_inline_pattern, comment_open_close_patt
     if '.java' in file_extensions:
         (block_linenos, blocks, block_names) = extractJavaFunction.getFunctions(file_string, logging, file_path,
                                                                                 separators, comment_inline_pattern)
-    # if '.c' in file_extensions:
-    #     (block_linenos, blocks, block_names) = extractCFunction.getFunctions(file_string, logging, file_path,
-    #                                                                          separators, comment_inline_pattern)
+    if '.c' in file_extensions:
+        (block_linenos, blocks) = extractCFunction.getFunctions(file_string, logging, file_path)
+    if '.cpp' in file_extensions:
+        (block_linenos, blocks) = extractCppFunction.getFunctions(file_string, logging, file_path)
 
     if block_linenos is None:
         logging.info('Returning None on tokenize_blocks for file %s.' % (file_path))
@@ -788,13 +790,20 @@ def merge_file_path(workspace_path):
             block_file.writelines(line)
     block_file.close()
 
-
     for file_name in stats_file:
         file_path = stats_path + '/' + file_name
         for line in open(file_path):
             stats_merge.writelines(line)
-
     stats_merge.close()
+
+    srcFile = os.path.join(tokens_path, 'files-tokens-0.tokens')
+    dstFile = os.path.join(workspace_path, 'query.file')
+    try:
+        os.rename(srcFile, dstFile)
+    except Exception as e:
+        print(e)
+
+
 
 if __name__ == '__main__':
 
@@ -805,18 +814,18 @@ if __name__ == '__main__':
     #     print("ERROR - Please insert archive format, 'zipblocks' or 'folderblocks'!")
     #     sys.exit()
 
-    # workspace_path = sys.argv[1]
-    # comment_inline_p = sys.argv[2]
-    # comment_open_tag_p = sys.argv[3]
-    # comment_close_tag_p = sys.argv[4]
-    # file_extensions_p = sys.argv[5]
+    workspace_path = sys.argv[1]
+    comment_inline_p = sys.argv[2]
+    comment_open_tag_p = sys.argv[3]
+    comment_close_tag_p = sys.argv[4]
+    file_extensions_p = sys.argv[5]
 
 
-    workspace_path = '/home/xinxin/Desktop/code_clone/output/'
-    comment_inline_p = '//'
-    comment_open_tag_p = '/*'
-    comment_close_tag_p = '*/'
-    file_extensions_p = '.java'
+    # workspace_path = '/home/xinxin/Desktop/code_clone/ctoken/'
+    # comment_inline_p = '//'
+    # comment_open_tag_p = '/*'
+    # comment_close_tag_p = '*/'
+    # file_extensions_p = '.c'
 
     read_config(workspace_path, comment_inline_p, comment_open_tag_p, comment_close_tag_p, file_extensions_p)
     p_start = dt.datetime.now()
