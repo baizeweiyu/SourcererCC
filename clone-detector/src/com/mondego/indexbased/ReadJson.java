@@ -111,9 +111,16 @@ public class ReadJson {
         // Project1ID Func1ID Project2ID Func2ID
         BufferedReader br = null;
         try {
-            br = new BufferedReader(new InputStreamReader(
-                    new FileInputStream(jf.getUserPath() + "NODE" + File.separator + "output" + jf.getThreshold()
-                            + File.separator + "queryclones_index_WITH_FILTER.txt"), StandardCharsets.UTF_8));
+            if (threshold.equals("10.0")) {
+                br = new BufferedReader(new InputStreamReader(
+                        new FileInputStream(jf.getUserPath() + "NODE" + File.separator + "output" + jf.getThreshold()
+                                + File.separator + "queryclones_index_WITH_FILTER.txt"), StandardCharsets.UTF_8));
+            }
+            else {
+                br = new BufferedReader(new InputStreamReader(
+                        new FileInputStream(jf.getUserPath() + "NODE" + File.separator + "output" + jf.getThreshold()
+                                + File.separator + "queryclones_index_WITH_FILTER.txt.fix"), StandardCharsets.UTF_8));
+            }
 //            br = new BufferedReader(new InputStreamReader(new FileInputStream(jf.getUserPath() + "tmpblock.txt")));
         } catch (FileNotFoundException e) {
             e.printStackTrace();

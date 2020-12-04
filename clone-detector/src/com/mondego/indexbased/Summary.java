@@ -172,35 +172,46 @@ public class Summary {
             SimpleDateFormat startDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             String startTime = startDateFormat.format(startDay);
             System.out.println(type[i]);
-
-            for (String s : cmd) {
-                arg[0] = s;
-                arg[1] = type[i];
-
-                // InputStreamReader isr = null;
-                // logger.info("reading Q values from properties file");
-                // String propertiesPath = System.getProperty("properties.location");
-                // logger.debug("propertiesPath: " + propertiesPath);
-                // FileInputStream fis = new FileInputStream(propertiesPath);
-                // isr = new InputStreamReader(fis, "UTF-8");
-                // properties.load(isr);
-                if (arg[0].equals("init") || arg[0].equals("index") || arg[0].equals("search")) {
-                    //SearchManager searchManager = new SearchManager(arg);
-                    SearchManager.stepInitIndexSearch(arg, properties);
-                } else {
-                    //IndexMerger indexMerger = new IndexMerger();
-                    IndexMerger.stepMerge(arg, properties);
-                }
-            }
+//
+//            for (String s : cmd) {
+//                arg[0] = s;
+//                arg[1] = type[i];
+//
+//                // InputStreamReader isr = null;
+//                // logger.info("reading Q values from properties file");
+//                // String propertiesPath = System.getProperty("properties.location");
+//                // logger.debug("propertiesPath: " + propertiesPath);
+//                // FileInputStream fis = new FileInputStream(propertiesPath);
+//                // isr = new InputStreamReader(fis, "UTF-8");
+//                // properties.load(isr);
+//                if (arg[0].equals("init") || arg[0].equals("index") || arg[0].equals("search")) {
+//                    //SearchManager searchManager = new SearchManager(arg);
+//                    SearchManager.stepInitIndexSearch(arg, properties);
+//                } else {
+//                    //IndexMerger indexMerger = new IndexMerger();
+//                    IndexMerger.stepMerge(arg, properties);
+//                }
+//            }
             System.out.println("over one");
             Date endDay = new Date();
             SimpleDateFormat endDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             String endTime = endDateFormat.format(endDay);
             long end = System.currentTimeMillis();
             Lines.speed(end - start);
+            if (i == 1) {
+                CleanQueryFile handler = new CleanQueryFile();
+//                System.out.println(System.getProperty("user.dir"));
+
+                String p2A = properties.getProperty("RESULT_DIR_PATH") + "NODE" + File.separator
+                        + "output" + type[i] + File.separator + "queryclones_index_WITH_FILTER.txt";
+                String p2B = properties.getProperty("RESULT_DIR_PATH") + "NODE" + File.separator
+                        + "output" + type[i-1] + File.separator + "queryclones_index_WITH_FILTER.txt";
+
+                handler.clean(p2A, p2B);
+
+            }
             ReadJson.output(properties.getProperty("RESULT_DIR_PATH"), type[i], startTime, endTime);
         }
-
 
 //        readJsonResult(properties.getProperty("RESULT_DIR_PATH"), type[0], startTime, endTime);
 
