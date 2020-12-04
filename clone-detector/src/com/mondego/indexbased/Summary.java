@@ -83,8 +83,8 @@ public class Summary {
 
             Map<String, String> result = new HashMap<>();
             Map<String, Object> fileResult = new HashMap<>();
-            Map<String, Object> cloneDetectResult = new HashMap<>(); 
-            
+            Map<String, Object> cloneDetectResult = new HashMap<>();
+
             while ((done < 4) && ((fileStatus = fileStats.readLine()) != null)) {
                 String[] status = fileStatus.split(",");
 
@@ -138,8 +138,9 @@ public class Summary {
             throws IOException, ParseException, InterruptedException {
 
         Properties properties = new Properties();
-
-        properties.setProperty("RESULT_DIR_PATH", "/home/xinxin/Desktop/code_clone/fastJson/");
+        String userPath = "/home/xinxin/Desktop/code_clone/fastJson/";
+        properties.setProperty("RESULT_DIR_PATH", userPath);
+        //need to get
 
         properties.setProperty("NODE_PREFIX", "NODE");
         properties.setProperty("QUERY_DIR_PATH", "query");
@@ -152,27 +153,29 @@ public class Summary {
         properties.setProperty("MAX_TOKENS", "500000");
         properties.setProperty("IS_SHARDING", "true");
         properties.setProperty("SHARD_MAX_NUM_TOKENS", "65,100,300,500000");
-        properties.setProperty("BTSQ_THREADS", "4");
-        properties.setProperty("BTIIQ_THREADS", "4");
-        properties.setProperty("BTFIQ_THREADS", "4");
-        properties.setProperty("QLQ_THREADS", "4");
-        properties.setProperty("QBQ_THREADS", "4");
-        properties.setProperty("QCQ_THREADS", "4");
-        properties.setProperty("VCQ_THREADS", "16");
-        properties.setProperty("RCQ_THREADS", "4");
+        properties.setProperty("BTSQ_THREADS", "16");
+        properties.setProperty("BTIIQ_THREADS", "16");
+        properties.setProperty("BTFIQ_THREADS", "16");
+        properties.setProperty("QLQ_THREADS", "16");
+        properties.setProperty("QBQ_THREADS", "16");
+        properties.setProperty("QCQ_THREADS", "16");
+        properties.setProperty("VCQ_THREADS", "64");
+        properties.setProperty("RCQ_THREADS", "16");
 
-        Date startDay = new Date();
-        SimpleDateFormat startDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String startTime = startDateFormat.format(startDay);
 
         String[] cmd = new String[]{"init", "index", "merge", "search"};
-        String[] type = new String[]{"7.0", "9.0", "10.0"};
+        String[] type = new String[]{"10.0", "8.0", "6.0"};
         String[] arg = new String[2];
-        for (String n : type) {
-            System.out.println(n);
+        for (int i = 0; i < 3; i++) {
+            long start = System.currentTimeMillis();
+            Date startDay = new Date();
+            SimpleDateFormat startDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String startTime = startDateFormat.format(startDay);
+            System.out.println(type[i]);
+
             for (String s : cmd) {
                 arg[0] = s;
-                arg[1] = n;
+                arg[1] = type[i];
 
                 // InputStreamReader isr = null;
                 // logger.info("reading Q values from properties file");
@@ -190,12 +193,15 @@ public class Summary {
                 }
             }
             System.out.println("over one");
+            Date endDay = new Date();
+            SimpleDateFormat endDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String endTime = endDateFormat.format(endDay);
+            long end = System.currentTimeMillis();
+            Lines.speed(end - start);
+            ReadJson.output(properties.getProperty("RESULT_DIR_PATH"), type[i], startTime, endTime);
         }
-        Date endDay = new Date();
-        SimpleDateFormat endDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String endTime = endDateFormat.format(endDay);
-        System.out.println(startTime);
-        System.out.println(endTime);
+
+
 //        readJsonResult(properties.getProperty("RESULT_DIR_PATH"), type[0], startTime, endTime);
 
     }
