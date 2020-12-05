@@ -164,7 +164,7 @@ public class Summary {
 
 
         String[] cmd = new String[]{"init", "index", "merge", "search"};
-        String[] type = new String[]{"10.0", "8.0", "3.0"};
+        String[] type = new String[]{"10.0", "8.0", "4.0"};
         String[] arg = new String[2];
         for (int i = 0; i < 3; i++) {
             long start = System.currentTimeMillis();

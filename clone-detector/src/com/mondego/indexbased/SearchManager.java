@@ -422,12 +422,16 @@ public class SearchManager {
         theInstance.genReport();
         Util.closeOutputFile(theInstance.reportWriter);
         try {
-//            Util.closeOutputFile(SearchManager.clonesWriter);
-//            Util.closeOutputFile(SearchManager.recoveryWriter);
-            SearchManager.clonesWriter.flush();
-            SearchManager.clonesWriter.close();
-            SearchManager.recoveryWriter.flush();
-            SearchManager.recoveryWriter.close();
+////            Util.closeOutputFile(SearchManager.clonesWriter);
+////            Util.closeOutputFile(SearchManager.recoveryWriter);
+            if (SearchManager.clonesWriter != null) {
+                SearchManager.clonesWriter.flush();
+//                SearchManager.clonesWriter.close();
+            }
+            if (SearchManager.recoveryWriter != null) {
+                SearchManager.recoveryWriter.flush();
+//                SearchManager.recoveryWriter.close();
+            }
             if (SearchManager.ACTION.equals(ACTION_SEARCH)) {
                 theInstance.backupOutput();
             }

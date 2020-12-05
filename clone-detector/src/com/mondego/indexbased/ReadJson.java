@@ -39,7 +39,7 @@ public class ReadJson {
             object.put("similarity_range", "80%-100%");
         }
         else {
-            object.put("similarity_range", "30%-80%");
+            object.put("similarity_range", "40%-80%");
         }
 
         // read all the absolute paths
