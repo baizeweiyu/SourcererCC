@@ -815,17 +815,17 @@ if __name__ == '__main__':
   # if project_format not in ['zipblocks','folderblocks']:
   #   print("ERROR - Please insert archive format, 'zipblocks' or 'folderblocks'!")
   #   sys.exit()
-  # workspace_path = sys.argv[1]
-  # comment_inline_p = sys.argv[2]
-  # comment_open_tag_p = sys.argv[3]
-  # comment_close_tag_p = sys.argv[4]
-  # file_extensions_p = sys.argv[5]
+  workspace_path = sys.argv[1]
+  comment_inline_p = sys.argv[2]
+  comment_open_tag_p = sys.argv[3]
+  comment_close_tag_p = sys.argv[4]
+  file_extensions_p = sys.argv[5]
 
-  workspace_path = '/home/xinxin/Desktop/SourcererCC/tokenizers/block-level/testpython'
-  comment_inline_p = '//'
-  comment_open_tag_p = '/*'
-  comment_close_tag_p = '*/'
-  file_extensions_p = '.py'
+  # workspace_path = '/home/xinxin/Desktop/SourcererCC/tokenizers/block-level/testpython'
+  # comment_inline_p = '//'
+  # comment_open_tag_p = '/*'
+  # comment_close_tag_p = '*/'
+  # file_extensions_p = '.py'
 
   read_config(workspace_path, comment_inline_p, comment_open_tag_p, comment_close_tag_p, file_extensions_p)
   p_start = dt.datetime.now()
