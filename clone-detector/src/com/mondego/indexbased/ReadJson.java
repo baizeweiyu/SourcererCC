@@ -117,9 +117,16 @@ public class ReadJson {
                                 + File.separator + "queryclones_index_WITH_FILTER.txt"), StandardCharsets.UTF_8));
             }
             else {
-                br = new BufferedReader(new InputStreamReader(
-                        new FileInputStream(jf.getUserPath() + "NODE" + File.separator + "output" + jf.getThreshold()
-                                + File.separator + "queryclones_index_WITH_FILTER.txt.fix"), StandardCharsets.UTF_8));
+                String queryClones = jf.getUserPath() + "NODE" + File.separator + "output" + jf.getThreshold()
+                        + File.separator + "queryclones_index_WITH_FILTER.txt.fix";
+                File file = new File(queryClones);
+                if (file.exists()) {
+                    br = new BufferedReader(new InputStreamReader(new FileInputStream(queryClones), StandardCharsets.UTF_8));
+                }
+                else {
+                    br = new BufferedReader(new InputStreamReader(new FileInputStream(jf.getUserPath() + "NODE" + File.separator + "output" + jf.getThreshold()
+                            + File.separator + "queryclones_index_WITH_FILTER.txt"), StandardCharsets.UTF_8));
+                }
             }
 //            br = new BufferedReader(new InputStreamReader(new FileInputStream(jf.getUserPath() + "tmpblock.txt")));
         } catch (FileNotFoundException e) {
