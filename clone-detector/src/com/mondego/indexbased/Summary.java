@@ -16,8 +16,8 @@ public class Summary {
     public static void main(String[] args) {
 
         Properties properties = new Properties();
-//        String userPath = "/home/xinxin/Desktop/code_clone/javatoken/";
-        String userPath = args[0];
+        String userPath = "/home/xinxin/Desktop/code_clone/javatoken/";
+//        String userPath = args[0];
         properties.setProperty("RESULT_DIR_PATH", userPath);
         //need to get
 
