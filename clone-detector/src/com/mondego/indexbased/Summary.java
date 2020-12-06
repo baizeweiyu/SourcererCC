@@ -16,8 +16,8 @@ public class Summary {
     public static void main(String[] args) {
 
         Properties properties = new Properties();
-//        String userPath = "/home/xinxin/Desktop/code_clone/fastJson/";
-        String userPath = args[0];
+        String userPath = "/home/xinxin/Desktop/code_clone/fastJson/";
+//        String userPath = args[0];
         properties.setProperty("RESULT_DIR_PATH", userPath);
         //need to get
 
@@ -89,7 +89,7 @@ public class Summary {
             String endTime = endDateFormat.format(endDay);
 //            long end = System.currentTimeMillis();
 //            Lines.speed(end - start);
-            if (i == 1) {
+            if (i > 0) {
                 CleanQueryFile handler = new CleanQueryFile();
 //                System.out.println(System.getProperty("user.dir"));
 
