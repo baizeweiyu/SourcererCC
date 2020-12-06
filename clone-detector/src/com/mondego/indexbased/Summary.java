@@ -13,7 +13,7 @@ import java.util.*;
 public class Summary {
     private static final Logger logger = LogManager.getLogger(Summary.class);
 
-    public static void main(String[] args) throws ParseException, InterruptedException, IOException {
+    public static void main(String[] args) {
 
         Properties properties = new Properties();
 //        String userPath = "/home/xinxin/Desktop/code_clone/fastJson/";
@@ -65,10 +65,22 @@ public class Summary {
                 // properties.load(isr);
                 if (arg[0].equals("init") || arg[0].equals("index") || arg[0].equals("search")) {
                     //SearchManager searchManager = new SearchManager(arg);
-                    SearchManager.stepInitIndexSearch(arg, properties);
+                    try {
+                        SearchManager.stepInitIndexSearch(arg, properties);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 } else {
                     //IndexMerger indexMerger = new IndexMerger();
-                    IndexMerger.stepMerge(arg, properties);
+                    try {
+                        IndexMerger.stepMerge(arg, properties);
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
             System.out.println("over one");
