@@ -11,7 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class Summary {
-    private static final Logger logger = LogManager.getLogger(Summary.class);
+//    private static final Logger logger = LogManager.getLogger(Summary.class);
 
     public static void main(String[] args) {
 
@@ -67,11 +67,7 @@ public class Summary {
                     //SearchManager searchManager = new SearchManager(arg);
                     try {
                         SearchManager.stepInitIndexSearch(arg, properties);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    } catch (InterruptedException e) {
+                    } catch (IOException | ParseException | InterruptedException e) {
                         e.printStackTrace();
                     }
                 } else {

@@ -138,7 +138,7 @@ public class SearchManager {
             .getLogger(SearchManager.class);
     public static boolean FATAL_ERROR;
 
-    public SearchManager(String[] args) throws IOException {
+    public SearchManager(String[] args) {
         SearchManager.clonePairsCount = 0;
         this.cloneHelper = new CloneHelper();
         this.timeSpentInProcessResult = 0;
@@ -149,7 +149,7 @@ public class SearchManager {
         SearchManager.numCandidates = 0;
         this.timeTotal = 0;
         this.appendToExistingFile = true;
-        SearchManager.ramBufferSizeMB = 100 * 1;
+        SearchManager.ramBufferSizeMB = 100;
         this.bagsSortTime = 0;
         SearchManager.ACTION = args[0];
         SearchManager.statusCounter = 0;
@@ -426,11 +426,11 @@ public class SearchManager {
 ////            Util.closeOutputFile(SearchManager.recoveryWriter);
             if (SearchManager.clonesWriter != null) {
                 SearchManager.clonesWriter.flush();
-//                SearchManager.clonesWriter.close();
+                SearchManager.clonesWriter.close();
             }
             if (SearchManager.recoveryWriter != null) {
                 SearchManager.recoveryWriter.flush();
-//                SearchManager.recoveryWriter.close();
+                SearchManager.recoveryWriter.close();
             }
             if (SearchManager.ACTION.equals(ACTION_SEARCH)) {
                 theInstance.backupOutput();

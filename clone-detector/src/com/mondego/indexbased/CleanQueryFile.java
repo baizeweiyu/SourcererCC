@@ -43,7 +43,7 @@ public class CleanQueryFile {
     public void clean(String path2A, String path2B) {
         path2Afile = path2A;
         path2Bfile = path2B;
-        path2Tfile = path2Afile + ".fix";
+        path2Tfile = path2A + ".fix";
 
         List<Tuple<Integer, String>> textInBfile = getDatafromFile(path2Bfile);
 
