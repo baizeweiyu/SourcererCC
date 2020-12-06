@@ -421,23 +421,28 @@ public class SearchManager {
         theInstance.timeTotal = estimatedTime;
         theInstance.genReport();
         Util.closeOutputFile(theInstance.reportWriter);
-        try {
+        if (SearchManager.ACTION.equalsIgnoreCase(ACTION_SEARCH)) {
+            try {
 ////            Util.closeOutputFile(SearchManager.clonesWriter);
 ////            Util.closeOutputFile(SearchManager.recoveryWriter);
-            if (SearchManager.clonesWriter != null) {
-                SearchManager.clonesWriter.flush();
-                SearchManager.clonesWriter.close();
+                if (SearchManager.clonesWriter != null) {
+                    SearchManager.clonesWriter.flush();
+                    SearchManager.clonesWriter.close();
+//                    System.out.println("clonesWriter closed");
+                }
+                if (SearchManager.recoveryWriter != null) {
+                    SearchManager.recoveryWriter.flush();
+                    SearchManager.recoveryWriter.close();
+//                    System.out.println("recoveryWriter closed");
+                }
+                if (SearchManager.ACTION.equals(ACTION_SEARCH)) {
+                    theInstance.backupOutput();
+                }
+            } catch (Exception e) {
+                logger.error("exception caught in main " + e.getMessage());
             }
-            if (SearchManager.recoveryWriter != null) {
-                SearchManager.recoveryWriter.flush();
-                SearchManager.recoveryWriter.close();
-            }
-            if (SearchManager.ACTION.equals(ACTION_SEARCH)) {
-                theInstance.backupOutput();
-            }
-        } catch (Exception e) {
-            logger.error("exception caught in main " + e.getMessage());
         }
+
         logger.info("completed on " + SearchManager.NODE_PREFIX);
     }
 

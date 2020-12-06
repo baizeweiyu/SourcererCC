@@ -122,7 +122,7 @@ public class Util {
         try {
             Writer pWriter = new BufferedWriter(new OutputStreamWriter(
                     new FileOutputStream(filename, append), StandardCharsets.UTF_8));
-            System.out.println("new file" + Thread.currentThread().getId());
+//            System.out.println("new file "+ filename + Thread.currentThread().getId());
             return pWriter;
 
         } catch (IOException e) {
@@ -144,7 +144,7 @@ public class Util {
             }
             try {
                 pWriter.close();
-                System.out.println("writer closed" + Thread.currentThread().getId());
+//                System.out.println("writer closed " + Thread.currentThread().getId());
             } catch (IOException e) {
                 e.printStackTrace();
             }
