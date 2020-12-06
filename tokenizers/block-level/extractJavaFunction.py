@@ -114,7 +114,7 @@ def getFunctions(filestring, logging, file_path, separators, comment_inline_patt
     logging.warning("File " + file_path + " cannot be parsed. (3)")
     return (None,None,method_name)
   else:
-    logging.warning("File " + file_path + " successfully parsed.")
+    logging.warning("File javaUnicode" + file_path + " successfully parsed.")
     return (method_pos,method_string,method_name)
 
 def check_repetition(node,name):

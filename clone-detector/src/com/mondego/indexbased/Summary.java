@@ -138,7 +138,8 @@ public class Summary {
             throws IOException, ParseException, InterruptedException {
 
         Properties properties = new Properties();
-        String userPath = "/home/xinxin/Desktop/code_clone/fastJson/";
+//        String userPath = "/home/xinxin/Desktop/code_clone/fastJson/";
+        String userPath = args[0];
         properties.setProperty("RESULT_DIR_PATH", userPath);
         //need to get
 
@@ -167,7 +168,7 @@ public class Summary {
         String[] type = new String[]{"10.0", "8.0", "4.0"};
         String[] arg = new String[2];
         for (int i = 0; i < 3; i++) {
-            long start = System.currentTimeMillis();
+//            long start = System.currentTimeMillis();
             Date startDay = new Date();
             SimpleDateFormat startDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             String startTime = startDateFormat.format(startDay);
@@ -196,8 +197,8 @@ public class Summary {
             Date endDay = new Date();
             SimpleDateFormat endDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             String endTime = endDateFormat.format(endDay);
-            long end = System.currentTimeMillis();
-            Lines.speed(end - start);
+//            long end = System.currentTimeMillis();
+//            Lines.speed(end - start);
             if (i == 1) {
                 CleanQueryFile handler = new CleanQueryFile();
 //                System.out.println(System.getProperty("user.dir"));

@@ -2,12 +2,6 @@ import clang
 import clang.cindex
 from clang.cindex import CursorKind
 
-# encoding=utf8  
-#import sys  
-#  
-#reload(sys)  
-#sys.setdefaultencoding('utf8')
-
 def getFunctions(filestring, logging, file_path):
     blocks_linenos = []
     strings = []
@@ -59,8 +53,7 @@ def getFunctions(filestring, logging, file_path):
     return (blocks_linenos, strings)
 
 if __name__ == "__main__":
-    #with open('test.cpp', encoding='utf-8') as f:
-    with open('test.cpp') as f:
+    with open('test.cpp', encoding='utf-8') as f:
         code = f.read()
     
     A = getFunctions(code, None, None)
