@@ -16,6 +16,7 @@ import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -120,7 +121,8 @@ public class Util {
             throws IOException {
         try {
             Writer pWriter = new BufferedWriter(new OutputStreamWriter(
-                    new FileOutputStream(filename, append), "UTF-8"));
+                    new FileOutputStream(filename, append), StandardCharsets.UTF_8));
+            System.out.println("new file" + Thread.currentThread().getId());
             return pWriter;
 
         } catch (IOException e) {
@@ -142,6 +144,7 @@ public class Util {
             }
             try {
                 pWriter.close();
+                System.out.println("writer closed" + Thread.currentThread().getId());
             } catch (IOException e) {
                 e.printStackTrace();
             }

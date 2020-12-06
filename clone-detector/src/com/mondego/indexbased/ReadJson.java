@@ -12,8 +12,8 @@ import java.util.Map;
 import com.google.gson.Gson;
 
 public class ReadJson {
-    private static String platform = "github";
-    private static String webPrefix = "https://github.com/";
+//    private static String platform = "github";
+//    private static String webPrefix = "https://github.com/";
 
     public static void output(String userPath, String threshold, String startTime, String endTime) {
         JsonFormat jf = new JsonFormat();
@@ -110,22 +110,22 @@ public class ReadJson {
         // read block file
         // Project1ID Func1ID Project2ID Func2ID
         BufferedReader br = null;
+        String queryClones = jf.getUserPath() + "NODE" + File.separator + "output" + jf.getThreshold()
+                + File.separator + "queryclones_index_WITH_FILTER.txt";
+        String queryClonesFix = jf.getUserPath() + "NODE" + File.separator + "output" + jf.getThreshold()
+                + File.separator + "queryclones_index_WITH_FILTER.txt.fix";
         try {
             if (threshold.equals("10.0")) {
                 br = new BufferedReader(new InputStreamReader(
-                        new FileInputStream(jf.getUserPath() + "NODE" + File.separator + "output" + jf.getThreshold()
-                                + File.separator + "queryclones_index_WITH_FILTER.txt"), StandardCharsets.UTF_8));
+                        new FileInputStream(queryClones), StandardCharsets.UTF_8));
             }
             else {
-                String queryClones = jf.getUserPath() + "NODE" + File.separator + "output" + jf.getThreshold()
-                        + File.separator + "queryclones_index_WITH_FILTER.txt.fix";
-                File file = new File(queryClones);
+                File file = new File(queryClonesFix);
                 if (file.exists()) {
-                    br = new BufferedReader(new InputStreamReader(new FileInputStream(queryClones), StandardCharsets.UTF_8));
+                    br = new BufferedReader(new InputStreamReader(new FileInputStream(queryClonesFix), StandardCharsets.UTF_8));
                 }
                 else {
-                    br = new BufferedReader(new InputStreamReader(new FileInputStream(jf.getUserPath() + "NODE" + File.separator + "output" + jf.getThreshold()
-                            + File.separator + "queryclones_index_WITH_FILTER.txt"), StandardCharsets.UTF_8));
+                    br = new BufferedReader(new InputStreamReader(new FileInputStream(queryClones), StandardCharsets.UTF_8));
                 }
             }
 //            br = new BufferedReader(new InputStreamReader(new FileInputStream(jf.getUserPath() + "tmpblock.txt")));
@@ -178,6 +178,16 @@ public class ReadJson {
 //                String repo = name[0];
 //                String version = name[1];
                 //need to clarify
+                String platform = null;
+                String webPrefix = null;
+                platform = detectFilePath[detectFilePath.length-3];
+                if (platform.equals("Github")) {
+                    webPrefix = "https://github.com/";
+                } else  if (platform.equals("Gitee")) {
+                    webPrefix = "https://gitee.com/";
+                } else {
+                    webPrefix = "/";
+                }
 
                 Map<String, Object> libraryInformation = new HashMap<>();
                 libraryInformation.put("library_address", webPrefix + owner + "/" + repo);
@@ -199,11 +209,12 @@ public class ReadJson {
             int libFileLoc = fileInfoMap.get(fileID[3].substring(5)).getLOC();
             curFileNameAndPath = curFileNameAndPath.replace("\"", " ");
             libFileNameAndPath = libFileNameAndPath.replace("\"", " ");
-            cloneDetectResult.put("file_name_and_path", curFileNameAndPath.replace(object.get("library_path").toString(), ""));
-            result.put("file_name_and_path", libFileNameAndPath.replace(object.get("library_path").toString(), ""));
+            cloneDetectResult.put("file_name_and_path", curFileNameAndPath.replace(object.get("library_path").toString(), "").trim());
+            result.put("file_name_and_path", libFileNameAndPath.replace(object.get("library_path").toString(), "").trim());
 
             String mmm = fileID[1].substring(5);
             // test code info
+            cloneDetectResult.put("IDX", Integer.parseInt(fileID[0])-11);
             cloneDetectResult.put("function_id", funcInfoMap.get(mmm).get(fileID[1]).getFunctionID());
             cloneDetectResult.put("LOC", funcInfoMap.get(mmm).get(fileID[1]).getLOC());
             cloneDetectResult.put("start_line", funcInfoMap.get(mmm).get(fileID[1]).getStartLine());
@@ -213,6 +224,7 @@ public class ReadJson {
 
             // lib code info
             String ttt = fileID[3].substring(5);
+            result.put("IDX", Integer.parseInt(fileID[2])-11);
             result.put("function_id", funcInfoMap.get(ttt).get(fileID[3]).getFunctionID());
             result.put("LOC", funcInfoMap.get(ttt).get(fileID[3]).getLOC());
             result.put("start_line", funcInfoMap.get(ttt).get(fileID[3]).getStartLine());
@@ -220,8 +232,8 @@ public class ReadJson {
             result.put("percentage", funcInfoMap.get(ttt).get(fileID[3]).getLOC() * 1.0 / libFileLoc * 100);
             ttt = null;
 
-            fileResult.put("result", result);
-            cloneDetectResult.put("file_result", fileResult);
+//            fileResult.put("result", result);
+            cloneDetectResult.put("file_result", result);
             detectList.add(cloneDetectResult);
 //            System.out.println(cnt);
         }

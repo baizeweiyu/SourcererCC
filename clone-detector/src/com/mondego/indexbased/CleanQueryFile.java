@@ -53,6 +53,11 @@ public class CleanQueryFile {
 
         List<Tuple<Integer, String>> textInAfile = getDatafromFile(path2Afile);
 
+        if (textInAfile.size() == 0) {
+            System.err.println("may be error");
+            return;
+        }
+
         textInAfile.sort(new Comparator<Tuple<Integer, String>>() {
             @Override
             public int compare(Tuple<Integer, String> o1, Tuple<Integer, String> o2) {

@@ -793,18 +793,19 @@ public class SearchManager {
                         this.appendToExistingFile = false;
                     }
                     SearchManager.clonesWriter = Util.openFile(
-                            SearchManager.OUTPUT_DIR
-                                    + SearchManager.th
-                                            / SearchManager.MUL_FACTOR
-                                    + File.separator + filename
-                                    + "clones_index_WITH_FILTER.txt",
+                            SearchManager.OUTPUT_DIR + SearchManager.th / SearchManager.MUL_FACTOR
+                                    + File.separator + filename + "clones_index_WITH_FILTER.txt",
                             this.appendToExistingFile);
+//                    SearchManager.clonesWriter = new BufferedWriter(new OutputStreamWriter(
+//                            new FileOutputStream(SearchManager.OUTPUT_DIR + SearchManager.th / SearchManager.MUL_FACTOR
+//                                    + File.separator + filename + "clones_index_WITH_FILTER.txt", this.appendToExistingFile), StandardCharsets.UTF_8));
                     // recoveryWriter
                     SearchManager.recoveryWriter = Util
                             .openFile(SearchManager.OUTPUT_DIR
-                                    + SearchManager.th
-                                            / SearchManager.MUL_FACTOR
-                                    + "/recovery.txt", false);
+                                    + SearchManager.th / SearchManager.MUL_FACTOR + "/recovery.txt", false);
+//                    SearchManager.recoveryWriter = new BufferedWriter(new OutputStreamWriter(
+//                            new FileOutputStream(SearchManager.OUTPUT_DIR + SearchManager.th / SearchManager.MUL_FACTOR
+//                                    + File.separator + "recovery.txt", false), StandardCharsets.UTF_8));
                 } catch (IOException e) {
                     logger.error(e.getMessage() + " exiting");
                     System.exit(1);

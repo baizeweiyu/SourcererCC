@@ -12,7 +12,7 @@ import java.util.*;
 
 public class Summary {
 //    private static final Logger logger = LogManager.getLogger(Summary.class);
-
+//    -Dlog4j.configurationFile="/home/xinxin/Desktop/kuku/NODE/log4j2.xml"
     public static void main(String[] args) {
 
         Properties properties = new Properties();
@@ -32,14 +32,14 @@ public class Summary {
         properties.setProperty("MAX_TOKENS", "500000");
         properties.setProperty("IS_SHARDING", "true");
         properties.setProperty("SHARD_MAX_NUM_TOKENS", "65,100,300,500000");
-        properties.setProperty("BTSQ_THREADS", "16");
-        properties.setProperty("BTIIQ_THREADS", "16");
-        properties.setProperty("BTFIQ_THREADS", "16");
-        properties.setProperty("QLQ_THREADS", "16");
-        properties.setProperty("QBQ_THREADS", "16");
-        properties.setProperty("QCQ_THREADS", "16");
-        properties.setProperty("VCQ_THREADS", "64");
-        properties.setProperty("RCQ_THREADS", "16");
+        properties.setProperty("BTSQ_THREADS", "8");
+        properties.setProperty("BTIIQ_THREADS", "8");
+        properties.setProperty("BTFIQ_THREADS", "8");
+        properties.setProperty("QLQ_THREADS", "8");
+        properties.setProperty("QBQ_THREADS", "8");
+        properties.setProperty("QCQ_THREADS", "8");
+        properties.setProperty("VCQ_THREADS", "32");
+        properties.setProperty("RCQ_THREADS", "8");
 
 
         String[] cmd = new String[]{"init", "index", "merge", "search"};
