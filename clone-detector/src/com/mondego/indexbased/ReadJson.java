@@ -4,10 +4,7 @@ import java.io.*;
 import java.lang.reflect.Array;
 import java.nio.Buffer;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import com.google.gson.Gson;
 
@@ -183,6 +180,7 @@ public class ReadJson {
                 // libraryInformation.put("library_address", webPrefix + owner + "/" + repo);
                 libraryInformation.put("library_platform", platform); // may be obtained by the path
                 libraryInformation.put("library_owner", owner);
+                libraryInformation.put("library_id", fID);
                 libraryInformation.put("library_name", repo);
                 libraryInformation.put("library_version", version);
                 libraryInformation.put("detect_file_number", 1);
@@ -204,7 +202,6 @@ public class ReadJson {
 
             String mmm = fileID[1].substring(5);
             // test code info
-            // cloneDetectResult.put("IDX", Integer.parseInt(fileID[0])-11);
             cloneDetectResult.put("function_id", funcInfoMap.get(mmm).get(fileID[1]).getFunctionID());
             cloneDetectResult.put("LOC", funcInfoMap.get(mmm).get(fileID[1]).getLOC());
             cloneDetectResult.put("start_line", funcInfoMap.get(mmm).get(fileID[1]).getStartLine());
@@ -214,7 +211,7 @@ public class ReadJson {
 
             // lib code info
             String ttt = fileID[3].substring(5);
-            result.put("IDX", Integer.parseInt(fileID[2])-12);
+            result.put("lib_id", Integer.parseInt(fileID[2]));
             result.put("function_id", funcInfoMap.get(ttt).get(fileID[3]).getFunctionID());
             result.put("LOC", funcInfoMap.get(ttt).get(fileID[3]).getLOC());
             result.put("start_line", funcInfoMap.get(ttt).get(fileID[3]).getStartLine());
@@ -227,6 +224,29 @@ public class ReadJson {
             detectList.add(cloneDetectResult);
 //            System.out.println(cnt);
         }
+
+        Collections.sort(openSourceLibrary, new Comparator<Map<String, Object>>() {
+            @Override
+            public int compare(Map<String, Object> o1, Map<String, Object> o2) {
+                return (int)o1.get("library_id") - (int)o2.get("library_id");
+            }
+        });
+
+        for(int i = 0; i < detectList.size(); i++) {
+            int idx = -1;
+            int curLibID = (int)((HashMap<String, Object>)detectList.get(i).get("file_result")).get("lib_id");
+            int left = 0;
+            int right = openSourceLibrary.size()-1;
+            while(left <= right) {
+                int half = (right - left)/2 + left;
+                int halfVal = (int)openSourceLibrary.get(half).get("library_id");
+                if(halfVal < curLibID) left = half + 1;
+                else if(halfVal > curLibID) right = half - 1;
+                else {idx = half;break;}
+            }
+            ((HashMap<String, Object>) detectList.get(i).get("file_result")).put("idx", idx);
+        }
+
         object.put("open_source_library", openSourceLibrary);
         object.put("clone_detection_result", detectList);
         Gson gson = new Gson();
