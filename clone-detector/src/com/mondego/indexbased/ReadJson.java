@@ -155,10 +155,11 @@ public class ReadJson {
             Map<String, Object> result = new HashMap<>();
             Map<String, Object> cloneDetectResult = new HashMap<>();
             int fID = Integer.parseInt(fileID[2]);
+            String curFilePath = pathList.get(fID - 11);
+            int lastLoc = curFilePath.lastIndexOf("/");
+            String libPath = curFilePath.substring(0, lastLoc+1);
             if (!zipID.contains(fileID[2])) {
                 zipID.add(fileID[2]);
-                String curFilePath = pathList.get(fID - 11);
-                int lastLoc = curFilePath.lastIndexOf("/");
                 String []libFilePath = curFilePath.split("/");
                 String proName = libFilePath[libFilePath.length-1];
                 proName = proName.replace(".zip", "");
@@ -184,9 +185,9 @@ public class ReadJson {
                 libraryInformation.put("library_name", repo);
                 libraryInformation.put("library_version", version);
                 libraryInformation.put("detect_file_number", 1);
-                if(!object.containsKey("library_path")) {
-                    object.put("library_path", curFilePath.substring(0, lastLoc+1));  // may be put outside
-                }
+//                if(!object.containsKey("library_path")) {
+//                    object.put("library_path", curFilePath.substring(0, lastLoc+1));  // may be put outside
+//                }
                 openSourceLibrary.add(libraryInformation);
             }
 
@@ -198,7 +199,7 @@ public class ReadJson {
             curFileNameAndPath = curFileNameAndPath.replace("\"", " ");
             libFileNameAndPath = libFileNameAndPath.replace("\"", " ");
             cloneDetectResult.put("file_name_and_path", curFileNameAndPath.replace(pathList.get(0), "").trim());
-            result.put("file_name_and_path", libFileNameAndPath.replace(object.get("library_path").toString(), "").trim());
+            result.put("file_name_and_path", libFileNameAndPath.replace(libPath, "").trim());
 
             String mmm = fileID[1].substring(5);
             // test code info
@@ -245,6 +246,7 @@ public class ReadJson {
                 else {idx = half;break;}
             }
             ((HashMap<String, Object>) detectList.get(i).get("file_result")).put("idx", idx);
+            ((HashMap<String, Object>) detectList.get(i).get("file_result")).remove("lib_id");
         }
 
         object.put("open_source_library", openSourceLibrary);
