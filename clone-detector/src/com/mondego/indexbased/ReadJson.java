@@ -111,7 +111,7 @@ public class ReadJson {
         // Project1ID Func1ID Project2ID Func2ID
         BufferedReader br = null;
         String queryClones = jf.getUserPath() + "NODE" + File.separator + "output" + jf.getThreshold()
-                + File.separator + "queryclones_index_WITH_FILTER.txt";
+                 + File.separator + "queryclones_index_WITH_FILTER.txt";
         String queryClonesFix = jf.getUserPath() + "NODE" + File.separator + "output" + jf.getThreshold()
                 + File.separator + "queryclones_index_WITH_FILTER.txt.fix";
         try {
@@ -148,8 +148,6 @@ public class ReadJson {
             String[] fileID = line.split(",");
 
 
-            String fileStatus = null;
-            int done = 0;
             if (zipID.contains(fileID[2])) {
                 int index = zipID.indexOf(fileID[2]);
                 int number = Integer.parseInt(openSourceLibrary.get(index).get("detect_file_number").toString());
@@ -158,14 +156,14 @@ public class ReadJson {
             }
 
             Map<String, Object> result = new HashMap<>();
-            Map<String, Object> fileResult = new HashMap<>();
             Map<String, Object> cloneDetectResult = new HashMap<>();
             int fID = Integer.parseInt(fileID[2]);
             if (!zipID.contains(fileID[2])) {
                 zipID.add(fileID[2]);
                 String curFilePath = pathList.get(fID - 11);
                 int lastLoc = curFilePath.lastIndexOf("/");
-                String proName = curFilePath.substring(lastLoc+1);
+                String []libFilePath = curFilePath.split("/");
+                String proName = libFilePath[libFilePath.length-1];
                 proName = proName.replace(".zip", "");
 
                 // owner repo version
@@ -179,18 +177,10 @@ public class ReadJson {
 //                String version = name[1];
                 //need to clarify
                 String platform = null;
-                String webPrefix = null;
-                platform = detectFilePath[detectFilePath.length-3];
-                if (platform.equals("Github")) {
-                    webPrefix = "https://github.com/";
-                } else  if (platform.equals("Gitee")) {
-                    webPrefix = "https://gitee.com/";
-                } else {
-                    webPrefix = "/";
-                }
+                platform = libFilePath[libFilePath.length-3];
 
                 Map<String, Object> libraryInformation = new HashMap<>();
-                libraryInformation.put("library_address", webPrefix + owner + "/" + repo);
+                // libraryInformation.put("library_address", webPrefix + owner + "/" + repo);
                 libraryInformation.put("library_platform", platform); // may be obtained by the path
                 libraryInformation.put("library_owner", owner);
                 libraryInformation.put("library_name", repo);
@@ -209,12 +199,12 @@ public class ReadJson {
             int libFileLoc = fileInfoMap.get(fileID[3].substring(5)).getLOC();
             curFileNameAndPath = curFileNameAndPath.replace("\"", " ");
             libFileNameAndPath = libFileNameAndPath.replace("\"", " ");
-            cloneDetectResult.put("file_name_and_path", curFileNameAndPath.replace(object.get("library_path").toString(), "").trim());
+            cloneDetectResult.put("file_name_and_path", curFileNameAndPath.replace(pathList.get(0), "").trim());
             result.put("file_name_and_path", libFileNameAndPath.replace(object.get("library_path").toString(), "").trim());
 
             String mmm = fileID[1].substring(5);
             // test code info
-            cloneDetectResult.put("IDX", Integer.parseInt(fileID[0])-11);
+            // cloneDetectResult.put("IDX", Integer.parseInt(fileID[0])-11);
             cloneDetectResult.put("function_id", funcInfoMap.get(mmm).get(fileID[1]).getFunctionID());
             cloneDetectResult.put("LOC", funcInfoMap.get(mmm).get(fileID[1]).getLOC());
             cloneDetectResult.put("start_line", funcInfoMap.get(mmm).get(fileID[1]).getStartLine());
@@ -224,7 +214,7 @@ public class ReadJson {
 
             // lib code info
             String ttt = fileID[3].substring(5);
-            result.put("IDX", Integer.parseInt(fileID[2])-11);
+            result.put("IDX", Integer.parseInt(fileID[2])-12);
             result.put("function_id", funcInfoMap.get(ttt).get(fileID[3]).getFunctionID());
             result.put("LOC", funcInfoMap.get(ttt).get(fileID[3]).getLOC());
             result.put("start_line", funcInfoMap.get(ttt).get(fileID[3]).getStartLine());
