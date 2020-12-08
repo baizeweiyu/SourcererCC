@@ -80,11 +80,12 @@ if __name__ == "__main__":
         print('-------------%s----------------' % file_name)
         with open(file_name) as f:
             code = f.read()
-        import pdb;pdb.set_trace()
 
         A = getFunctions(code, None, None)
         for i in range(len(A[0])):
             print(A[0][i])
             print(A[1][i])
+        import pdb;pdb.set_trace()
+        print(A)
                 
             

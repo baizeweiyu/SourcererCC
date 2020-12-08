@@ -1,19 +1,12 @@
 import clang
 import clang.cindex
 from clang.cindex import CursorKind
-from clang.cindex import Config
+import re
 
 def getFunctions(filestring, logging, file_path):
     blocks_linenos = []
     strings = []
-
-    # libclangPath = r'/usr/lib/llvm-3.8/lib/libclang.so.1'
-    # if Config.loaded:
-    #     pass
-    # else:
-    #     print('Load')
-    #     Config.set_library_path(libclangPath)
-
+    filestring = re.sub(re.escape('#') + '.*?$', '', filestring, flags=re.MULTILINE)
     try:
         index = clang.cindex.Index.create()
         tu = index.parse(path='0.c', unsaved_files=[('0.c',filestring)])

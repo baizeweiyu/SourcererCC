@@ -15,6 +15,9 @@ import extractPythonFunction
 import extractJavaFunction
 import extractCppFunction
 import extractCFunction
+import extractCSharpFunction
+import extractPhpFunction_fast
+import extractGoFunction
 import io
 
 # import importlib
@@ -105,6 +108,31 @@ def read_config(workspace_path, comment_inline_p, comment_open_tag_p, comment_cl
     comment_close_tag = re.escape(comment_close_tag_p)
     comment_open_close_pattern = comment_open_tag + '.*?' + comment_close_tag
     file_extensions = file_extensions_p.split(' ')
+
+    if file_extensions[0].lower() == '.py':
+        # For python
+        comment_inline_p = '#'
+        comment_open_tag_p1 = '\'\'\''
+        comment_close_tag_p1 = '\'\'\''
+        comment_open_tag_p2 = '\"\"\"'
+        comment_close_tag_p2 = '\"\"\"'
+
+        comment_inline = re.escape(comment_inline_p)
+        comment_inline_pattern = comment_inline + '.*?$'
+        comment_open_tag1 = re.escape(comment_open_tag_p1)
+        comment_close_tag1 = re.escape(comment_close_tag_p1)
+        comment_open_tag2 = re.escape(comment_open_tag_p2)
+        comment_close_tag2 = re.escape(comment_close_tag_p2)
+        comment_open_close_pattern = comment_open_tag1 + '.*?' + comment_close_tag1 + '|' + comment_open_tag2 + '.*?' + comment_close_tag2
+
+    elif file_extensions[0].lower() == '.php':
+        # For PHP
+        comment_inline_p1 = '#'
+        comment_inline_p2 = '//'
+
+        comment_inline_p1 = re.escape(comment_inline_p1)
+        comment_inline_p2 = re.escape(comment_inline_p2)
+        comment_inline_pattern = comment_inline_p1 + '.*?$' + '|' + comment_inline_p2 + '.*?$'
 
     # Reading config settings
     # init_file_id = config.getint('Config', 'init_file_id')
@@ -211,6 +239,13 @@ def tokenize_blocks(file_string, comment_inline_pattern, comment_open_close_patt
         (block_linenos, blocks) = extractCFunction.getFunctions(file_string, logging, file_path)
     if '.cpp' in file_extensions:
         (block_linenos, blocks) = extractCppFunction.getFunctions(file_string, logging, file_path)
+    if '.cs' in file_extensions:
+        (block_linenos, blocks) = extractCSharpFunction.getFunctions(file_string, logging, file_path)
+    if '.go' in file_extensions:
+        (block_linenos, blocks) = extractGoFunction.getFunctions(file_string, logging, file_path)
+    if '.php' in file_extensions:
+        # (block_linenos, blocks, block_names) = extractPhpFunction.getFunctions(file_string, logging, file_path)
+        (block_linenos, blocks) = extractPhpFunction_fast.getFunctions(file_string, logging, file_path)
 
     if block_linenos is None:
         logging.info('Returning None on tokenize_blocks for file %s.' % (file_path))
@@ -821,11 +856,11 @@ if __name__ == '__main__':
     file_extensions_p = sys.argv[5]
 
 
-    # workspace_path = '/home/xinxin/Desktop/code_clone/java_data/'
+    # workspace_path = '/home/xinxin/Desktop/code_clone/phptoken/'
     # comment_inline_p = '//'
     # comment_open_tag_p = '/*'
     # comment_close_tag_p = '*/'
-    # file_extensions_p = '.java'
+    # file_extensions_p = '.php'
 
     read_config(workspace_path, comment_inline_p, comment_open_tag_p, comment_close_tag_p, file_extensions_p)
     p_start = dt.datetime.now()
