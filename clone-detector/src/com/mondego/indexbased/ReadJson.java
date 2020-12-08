@@ -4,10 +4,7 @@ import java.io.*;
 import java.lang.reflect.Array;
 import java.nio.Buffer;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import com.google.gson.Gson;
 
@@ -111,7 +108,7 @@ public class ReadJson {
         // Project1ID Func1ID Project2ID Func2ID
         BufferedReader br = null;
         String queryClones = jf.getUserPath() + "NODE" + File.separator + "output" + jf.getThreshold()
-                + File.separator + "queryclones_index_WITH_FILTER.txt";
+                 + File.separator + "queryclones_index_WITH_FILTER.txt";
         String queryClonesFix = jf.getUserPath() + "NODE" + File.separator + "output" + jf.getThreshold()
                 + File.separator + "queryclones_index_WITH_FILTER.txt.fix";
         try {
@@ -148,8 +145,6 @@ public class ReadJson {
             String[] fileID = line.split(",");
 
 
-            String fileStatus = null;
-            int done = 0;
             if (zipID.contains(fileID[2])) {
                 int index = zipID.indexOf(fileID[2]);
                 int number = Integer.parseInt(openSourceLibrary.get(index).get("detect_file_number").toString());
@@ -158,14 +153,15 @@ public class ReadJson {
             }
 
             Map<String, Object> result = new HashMap<>();
-            Map<String, Object> fileResult = new HashMap<>();
             Map<String, Object> cloneDetectResult = new HashMap<>();
             int fID = Integer.parseInt(fileID[2]);
+            String curFilePath = pathList.get(fID - 11);
+            int lastLoc = curFilePath.lastIndexOf("/");
+            String libPath = curFilePath.substring(0, lastLoc+1);
             if (!zipID.contains(fileID[2])) {
                 zipID.add(fileID[2]);
-                String curFilePath = pathList.get(fID - 11);
-                int lastLoc = curFilePath.lastIndexOf("/");
-                String proName = curFilePath.substring(lastLoc+1);
+                String []libFilePath = curFilePath.split("/");
+                String proName = libFilePath[libFilePath.length-1];
                 proName = proName.replace(".zip", "");
 
                 // owner repo version
@@ -179,26 +175,19 @@ public class ReadJson {
 //                String version = name[1];
                 //need to clarify
                 String platform = null;
-                String webPrefix = null;
-                platform = detectFilePath[detectFilePath.length-3];
-                if (platform.equals("Github")) {
-                    webPrefix = "https://github.com/";
-                } else  if (platform.equals("Gitee")) {
-                    webPrefix = "https://gitee.com/";
-                } else {
-                    webPrefix = "/";
-                }
+                platform = libFilePath[libFilePath.length-3];
 
                 Map<String, Object> libraryInformation = new HashMap<>();
-                libraryInformation.put("library_address", webPrefix + owner + "/" + repo);
+                // libraryInformation.put("library_address", webPrefix + owner + "/" + repo);
                 libraryInformation.put("library_platform", platform); // may be obtained by the path
                 libraryInformation.put("library_owner", owner);
+                libraryInformation.put("library_id", fID);
                 libraryInformation.put("library_name", repo);
                 libraryInformation.put("library_version", version);
                 libraryInformation.put("detect_file_number", 1);
-                if(!object.containsKey("library_path")) {
-                    object.put("library_path", curFilePath.substring(0, lastLoc+1));  // may be put outside
-                }
+//                if(!object.containsKey("library_path")) {
+//                    object.put("library_path", curFilePath.substring(0, lastLoc+1));  // may be put outside
+//                }
                 openSourceLibrary.add(libraryInformation);
             }
 
@@ -209,12 +198,11 @@ public class ReadJson {
             int libFileLoc = fileInfoMap.get(fileID[3].substring(5)).getLOC();
             curFileNameAndPath = curFileNameAndPath.replace("\"", " ");
             libFileNameAndPath = libFileNameAndPath.replace("\"", " ");
-            cloneDetectResult.put("file_name_and_path", curFileNameAndPath.replace(object.get("library_path").toString(), "").trim());
-            result.put("file_name_and_path", libFileNameAndPath.replace(object.get("library_path").toString(), "").trim());
+            cloneDetectResult.put("file_name_and_path", curFileNameAndPath.replace(pathList.get(0), "").trim());
+            result.put("file_name_and_path", libFileNameAndPath.replace(libPath, "").trim());
 
             String mmm = fileID[1].substring(5);
             // test code info
-            cloneDetectResult.put("IDX", Integer.parseInt(fileID[0])-11);
             cloneDetectResult.put("function_id", funcInfoMap.get(mmm).get(fileID[1]).getFunctionID());
             cloneDetectResult.put("LOC", funcInfoMap.get(mmm).get(fileID[1]).getLOC());
             cloneDetectResult.put("start_line", funcInfoMap.get(mmm).get(fileID[1]).getStartLine());
@@ -224,7 +212,7 @@ public class ReadJson {
 
             // lib code info
             String ttt = fileID[3].substring(5);
-            result.put("IDX", Integer.parseInt(fileID[2])-11);
+            result.put("lib_id", Integer.parseInt(fileID[2]));
             result.put("function_id", funcInfoMap.get(ttt).get(fileID[3]).getFunctionID());
             result.put("LOC", funcInfoMap.get(ttt).get(fileID[3]).getLOC());
             result.put("start_line", funcInfoMap.get(ttt).get(fileID[3]).getStartLine());
@@ -237,6 +225,30 @@ public class ReadJson {
             detectList.add(cloneDetectResult);
 //            System.out.println(cnt);
         }
+
+        Collections.sort(openSourceLibrary, new Comparator<Map<String, Object>>() {
+            @Override
+            public int compare(Map<String, Object> o1, Map<String, Object> o2) {
+                return (int)o1.get("library_id") - (int)o2.get("library_id");
+            }
+        });
+
+        for(int i = 0; i < detectList.size(); i++) {
+            int idx = -1;
+            int curLibID = (int)((HashMap<String, Object>)detectList.get(i).get("file_result")).get("lib_id");
+            int left = 0;
+            int right = openSourceLibrary.size()-1;
+            while(left <= right) {
+                int half = (right - left)/2 + left;
+                int halfVal = (int)openSourceLibrary.get(half).get("library_id");
+                if(halfVal < curLibID) left = half + 1;
+                else if(halfVal > curLibID) right = half - 1;
+                else {idx = half;break;}
+            }
+            ((HashMap<String, Object>) detectList.get(i).get("file_result")).put("idx", idx);
+            ((HashMap<String, Object>) detectList.get(i).get("file_result")).remove("lib_id");
+        }
+
         object.put("open_source_library", openSourceLibrary);
         object.put("clone_detection_result", detectList);
         Gson gson = new Gson();
