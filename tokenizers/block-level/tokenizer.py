@@ -16,7 +16,7 @@ import extractJavaFunction
 import extractCppFunction
 import extractCFunction
 import extractCSharpFunction
-import extractPhpFunction_fast
+import extractPhpFunction
 import extractGoFunction
 import io
 
@@ -245,7 +245,7 @@ def tokenize_blocks(file_string, comment_inline_pattern, comment_open_close_patt
         (block_linenos, blocks) = extractGoFunction.getFunctions(file_string, logging, file_path)
     if '.php' in file_extensions:
         # (block_linenos, blocks, block_names) = extractPhpFunction.getFunctions(file_string, logging, file_path)
-        (block_linenos, blocks) = extractPhpFunction_fast.getFunctions(file_string, logging, file_path)
+        (block_linenos, blocks) = extractPhpFunction.getFunctions(file_string, logging, file_path)
 
     if block_linenos is None:
         logging.info('Returning None on tokenize_blocks for file %s.' % (file_path))
