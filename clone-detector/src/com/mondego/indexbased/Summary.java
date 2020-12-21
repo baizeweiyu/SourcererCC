@@ -16,7 +16,7 @@ public class Summary {
     public static void main(String[] args) {
 
         Properties properties = new Properties();
-//        String userPath = "/home/xinxin/Desktop/code_clone/javatoken/";
+//        String userPath = "/home/abuabu/Desktop/code_clone/demo/";
         String userPath = args[0];
         properties.setProperty("RESULT_DIR_PATH", userPath);
         //need to get
@@ -43,18 +43,19 @@ public class Summary {
 
 
         String[] cmd = new String[]{"init", "index", "merge", "search"};
-        String[] type = new String[]{"10.0", "8.0", "4.0"};
+//        String[] type = new String[]{"10.0", "8.0", "4.0"};
         String[] arg = new String[2];
-        for (int i = 0; i < 3; i++) {
-//            long start = System.currentTimeMillis();
-            Date startDay = new Date();
-            SimpleDateFormat startDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            String startTime = startDateFormat.format(startDay);
-            System.out.println(type[i]);
+//        for (int i = 0; i < 3; i++) {
+            long start = System.currentTimeMillis();
+//            Date startDay = new Date();
+//            SimpleDateFormat startDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//            String startTime = startDateFormat.format(startDay);
+//            System.out.println(type[i]);
 
             for (String s : cmd) {
                 arg[0] = s;
-                arg[1] = type[i];
+                arg[1] = "4.0";
+//                arg[1] = type[i];
 
                 // InputStreamReader isr = null;
                 // logger.info("reading Q values from properties file");
@@ -80,27 +81,28 @@ public class Summary {
                 }
             }
             System.out.println("over one");
-            Date endDay = new Date();
-            SimpleDateFormat endDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            String endTime = endDateFormat.format(endDay);
-//            long end = System.currentTimeMillis();
-//            Lines.speed(end - start);
-            if (i > 0) {
-                CleanQueryFile handler = new CleanQueryFile();
-//                System.out.println(System.getProperty("user.dir"));
-
-                String p2A = properties.getProperty("RESULT_DIR_PATH") + "NODE" + File.separator
-                        + "output" + type[i] + File.separator + "queryclones_index_WITH_FILTER.txt";
-                String p2B = properties.getProperty("RESULT_DIR_PATH") + "NODE" + File.separator
-                        + "output" + type[i-1] + File.separator + "queryclones_index_WITH_FILTER.txt";
-
-                handler.clean(p2A, p2B);
-
-            }
-            ReadJson.output(properties.getProperty("RESULT_DIR_PATH"), type[i], startTime, endTime);
+//            Date endDay = new Date();
+//            SimpleDateFormat endDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//            String endTime = endDateFormat.format(endDay);
+            long end = System.currentTimeMillis();
+            Long time = end - start;
+            Lines.speed(userPath, Integer.parseInt(String.valueOf(time)));
+//            if (i > 0) {
+//                CleanQueryFile handler = new CleanQueryFile();
+////                System.out.println(System.getProperty("user.dir"));
+//
+//                String p2A = properties.getProperty("RESULT_DIR_PATH") + "NODE" + File.separator
+//                        + "output" + type[i] + File.separator + "queryclones_index_WITH_FILTER.txt";
+//                String p2B = properties.getProperty("RESULT_DIR_PATH") + "NODE" + File.separator
+//                        + "output" + type[i-1] + File.separator + "queryclones_index_WITH_FILTER.txt";
+//
+//                handler.clean(p2A, p2B);
+//
+//            }
+//            ReadJson.output(properties.getProperty("RESULT_DIR_PATH"), type[i], startTime, endTime);
         }
 
 //        readJsonResult(properties.getProperty("RESULT_DIR_PATH"), type[0], startTime, endTime);
 
-    }
+//    }
 }
