@@ -25,6 +25,7 @@ public class Lines {
             }
         }
         int speed = lineNum / (time / 1000);
+        System.out.println(time / 1000);
         System.out.println(lineNum);
         System.out.println(speed);
     }
