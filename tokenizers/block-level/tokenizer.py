@@ -850,16 +850,16 @@ if __name__ == '__main__':
     #     sys.exit()
 
     workspace_path = sys.argv[1]
-    comment_inline_p = sys.argv[2]
-    comment_open_tag_p = sys.argv[3]
-    comment_close_tag_p = sys.argv[4]
-    file_extensions_p = sys.argv[5]
+    # comment_inline_p = sys.argv[2]
+    # comment_open_tag_p = sys.argv[3]
+    # comment_close_tag_p = sys.argv[4]
+    file_extensions_p = sys.argv[2]
 
 
     # workspace_path = '/home/xinxin/Desktop/code_clone/phptoken/'
-    # comment_inline_p = '//'
-    # comment_open_tag_p = '/*'
-    # comment_close_tag_p = '*/'
+    comment_inline_p = '//'
+    comment_open_tag_p = '/*'
+    comment_close_tag_p = '*/'
     # file_extensions_p = '.php'
 
     read_config(workspace_path, comment_inline_p, comment_open_tag_p, comment_close_tag_p, file_extensions_p)
