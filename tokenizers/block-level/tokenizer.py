@@ -679,7 +679,7 @@ def process_one_project(process_num, proj_id, proj_path, base_file_id,
             zip_time, file_time, string_time, tokens_time, write_time, hash_time, regex_time = times
         else:
             zip_time, file_time, string_time, tokens_time, write_time, hash_time, regex_time = (
-            -1, -1, -1, -1, -1, -1, -1)
+                -1, -1, -1, -1, -1, -1, -1)
 
         FILE_bookkeeping_proj.write(proj_id + ',\"' + proj_path + '\",\"' + proj_url + '\"\n')
 
@@ -702,7 +702,7 @@ def process_one_project(process_num, proj_id, proj_path, base_file_id,
             zip_time, file_time, string_time, tokens_time, write_time, hash_time, regex_time = times
         else:
             zip_time, file_time, string_time, tokens_time, write_time, hash_time, regex_time = (
-            -1, -1, -1, -1, -1, -1, -1)
+                -1, -1, -1, -1, -1, -1, -1)
 
         FILE_bookkeeping_proj.write(proj_id + ',\"' + proj_path + '\",\"' + proj_url + '\"\n')
 
@@ -725,7 +725,7 @@ def process_one_project(process_num, proj_id, proj_path, base_file_id,
             zip_time, file_time, string_time, tokens_time, write_time, hash_time, regex_time = times
         else:
             zip_time, file_time, string_time, tokens_time, write_time, hash_time, regex_time = (
-            -1, -1, -1, -1, -1, -1, -1)
+                -1, -1, -1, -1, -1, -1, -1)
 
         FILE_bookkeeping_proj.write(proj_id + ',\"' + proj_path + '\",\"' + proj_url + '\"\n')
 
@@ -797,7 +797,7 @@ def kill_child(processes, pid, n_files_processed):
         processes[pid][1] += n_files_processed
 
         print("Process %s finished, %s files processed (%s). Current total: %s" % (
-        pid, n_files_processed, processes[pid][1], file_count))
+            pid, n_files_processed, processes[pid][1], file_count))
 
 
 def active_process_count(processes):
@@ -807,8 +807,9 @@ def active_process_count(processes):
             count += 1
     return count
 
+
 def merge_file_path(workspace_path):
-# merge blocks_tokens file_block_stats
+    # merge blocks_tokens file_block_stats
     tokens_path = os.path.join(workspace_path, 'blocks_tokens')
     tokens_file = os.listdir(tokens_path)
     stats_path = os.path.join(workspace_path, 'file_block_stats')
@@ -839,7 +840,6 @@ def merge_file_path(workspace_path):
         print(e)
 
 
-
 if __name__ == '__main__':
 
     global project_format
@@ -854,7 +854,6 @@ if __name__ == '__main__':
     # comment_open_tag_p = sys.argv[3]
     # comment_close_tag_p = sys.argv[4]
     file_extensions_p = sys.argv[2]
-
 
     # workspace_path = '/home/xinxin/Desktop/code_clone/phptoken/'
     comment_inline_p = '//'
