@@ -97,6 +97,11 @@ public class Summary {
                 handler.clean(p2A, p2B);
 
             }
+            try {
+                SaveType.type(userPath, type[i]);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 //            ReadJson.output(properties.getProperty("RESULT_DIR_PATH"), type[i], startTime, endTime);
         }
 
