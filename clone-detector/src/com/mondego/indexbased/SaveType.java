@@ -30,7 +30,7 @@ public class SaveType {
         }
 
         BufferedReader fs = null;  //file-stats.stats
-        fs = new BufferedReader(new InputStreamReader(new FileInputStream(userpath + "file-stats.stats"), StandardCharsets.UTF_8));
+
 
         BufferedWriter out = new BufferedWriter(new FileWriter(userpath + "output"+threshold+"type.txt"));
 //        out.write("");
@@ -42,7 +42,7 @@ public class SaveType {
             String[] name2 = null;
             String ID1 = null;
             String ID2 = null;
-
+            fs = new BufferedReader(new InputStreamReader(new FileInputStream(userpath + "file-stats.stats"), StandardCharsets.UTF_8));
             String fileStats = null;
             int done = 0;
             while (((fileStats = fs.readLine()) != null) && done < 2){
@@ -61,11 +61,11 @@ public class SaveType {
                 }
             }
             if (threshold.equals("10.0"))
-                out.write(ID1 + " " + ID2 + " " + "1");
+                out.write(ID1 + " " + ID2 + " " + "1\n");
             if (threshold.equals("8.0"))
-                out.write(ID1 + " " + ID2 + " " + "2");
+                out.write(ID1 + " " + ID2 + " " + "2\n");
             if (threshold.equals("4.0"))
-                out.write(ID1 + " " + ID2 + " " + "3");
+                out.write(ID1 + " " + ID2 + " " + "3\n");
         }
         out.close();
     }
