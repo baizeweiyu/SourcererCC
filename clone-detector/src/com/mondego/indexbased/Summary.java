@@ -97,7 +97,7 @@ public class Summary {
                 handler.clean(p2A, p2B);
 
             }
-            ReadJson.output(properties.getProperty("RESULT_DIR_PATH"), type[i], startTime, endTime);
+//            ReadJson.output(properties.getProperty("RESULT_DIR_PATH"), type[i], startTime, endTime);
         }
 
 //        readJsonResult(properties.getProperty("RESULT_DIR_PATH"), type[0], startTime, endTime);
